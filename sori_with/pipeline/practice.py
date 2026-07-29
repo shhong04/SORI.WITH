@@ -64,25 +64,26 @@ def run_personal_practice(
         )
     schedule.sort(key=lambda a: a.timestamp)
 
-    # Accuracy proxies from onset regularity vs score tempo grid
-    beat_dur = 60.0 / score.tempo_bpm
-    if len(user.onset_times) >= 2:
+    # Accuracy from score-matched timing (P1); pitch AMT still unsupported
+    if user.matches:
+        timing = float(np.clip(1.0 - user.mean_abs_error_ms / 200.0, 0.0, 1.0))
+        rhythm = timing
+    elif len(user.onset_times) >= 2:
+        beat_dur = 60.0 / score.tempo_bpm
         ioi = np.diff(user.onset_times)
-        expected = beat_dur
-        rhythm_err = float(np.mean(np.abs(ioi - expected) / expected))
+        rhythm_err = float(np.mean(np.abs(ioi - beat_dur) / beat_dur))
         timing = float(np.clip(1.0 - rhythm_err, 0.0, 1.0))
         rhythm = timing
     else:
         timing = 0.5
         rhythm = 0.5
 
-    pitch = 0.85  # Phase 2 placeholder without full pitch model
-    note_duration = 0.8
     accuracy = {
-        "pitch": pitch,
+        "pitch": 0.0,  # not measured (pitch_supported=False)
         "rhythm": rhythm,
         "timing": timing,
-        "noteDuration": note_duration,
+        "noteDuration": 0.8,
+        "alignmentConfidence": float(user.alignment_confidence),
     }
 
     # Ensemble readiness using a one-part timeline + synthetic stability

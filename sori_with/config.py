@@ -37,6 +37,8 @@ class ThresholdConfig(BaseModel):
     )
     deviation_significance_ms: float = 60.0
     propagation_lag_window_ms: float = 800.0
+    sessionist_confidence_floor: float = 0.45
+    coaching_cooldown_sec: float = 4.0
 
 
 class Settings(BaseSettings):

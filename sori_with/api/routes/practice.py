@@ -112,6 +112,7 @@ async def live_tick(body: LiveTickRequest) -> dict:
         tempo=body.tempo,
         confidence=body.confidence,
         timestamp=body.timestamp,
+        session_id=body.session_id,
     )
 
     clock = EnsembleClock(

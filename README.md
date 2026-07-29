@@ -4,8 +4,8 @@
 합주 연습 API 흐름(개인 / 온라인 룸 / AI 세션 / 코칭)으로 연결한 **백엔드 프로토타입**입니다.
 
 > **현재 상태 (정직한 요약)**  
-> FastAPI 기반 **아키텍처·데모 플로우** + **P1 onset–score DTW 정렬 / signed timing deviation**.  
-> pitch AMT, 본격 HMM/repeat graph, 제품급 Sessionist는 아직 없습니다.
+> FastAPI 프로토타입 + **P1 score-matched timing** + **P2 layered Sessionist**.  
+> pitch AMT, 본격 HMM/repeat graph, 영속 DB/auth는 아직 없습니다.
 ---
 
 ## 기능 요약
@@ -14,10 +14,10 @@
 |------|------|-----------|
 | Offline Ensemble Analysis | 파트 WAV + MIDI → 리포트 API | **API + score-matched timing (P1)** |
 | Score Following (DTW) | onset ↔ score beat/event 정렬 + signed error | **P1 offline / online stub** |
-| AI 개인 연습 + Sessionist | 연습 리포트 + 고정 패턴 스케줄/렌더 | **demo flow** |
+| AI 개인 연습 + Sessionist | score content + tempo transport + fail-safe live control | **P2 Sessionist** |
 | 실시간 코칭 tick + WebSocket | Drift/Breakdown 규칙 기반 피드백 | **policy skeleton** |
 | Ensemble Room | 다중 참가 · 빈 파트 AI fill · 룸 분석 | **API demo** |
-| Sessionist 오디오 렌더 | 패턴 → MIDI/WAV 스템 | **synthetic render** |
+| Sessionist 오디오 렌더 | schedule → MIDI/WAV 스템 | **renderer** |
 
 상세·한계: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md)  
 아키텍처: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
@@ -31,7 +31,7 @@ API: [`docs/API.md`](docs/API.md)
 |------------------|---------------------|-----------|
 | **Audio-to-MIDI / AMT** | onset · IOI tempo (pitch 전사 없음) | `audio/processing.py`, `engines/part_understanding.py` |
 | **Score Following** | onset–score DTW 정렬 + signed timing error (P1) | `engines/score_follower.py`, `part_understanding.py` |
-| **Adaptive Music Control** | 고정 패턴 Sessionist + stretch | `engines/sessionist.py`, `audio/render.py` |
+| **Adaptive Music Control** | content→transport→scheduler + live fail-safe (P2) | `engines/sessionist.py`, `audio/render.py` |
 | **Performance Analytics** | score-matched spread / windowed relation / coaching | `engines/ensemble_*.py`, `engines/coaching.py` |
 
 ```text
@@ -46,9 +46,8 @@ Ensemble Clock + windowed Relations + State (hysteresis)
     └── Coaching + Analytics Report
 ```
 
-다음 스프린트(P2): Sessionist를 실제 score content + scheduler로 재설계.  
-P1 목표(정렬 + signed deviation)는 `follow_score_offline` / 리포트 필드로 반영됨.
----
+다음 스프린트(P3): DB/auth/queue 등 제품화.  
+P2: Sessionist는 MIDI role content(가능 시) + 누적 tempo transport + look-ahead/live fail-safe.---
 
 ## 요구 사항
 

@@ -71,15 +71,22 @@ onset 시각을 고정 tempo grid에 넣는 방식은 **폐기**했습니다.
 ### 목적 (비전)
 부족한 파트를 사용자 tempo/위치에 맞춰 조절하는 AI 세션.
 
-### 현재 구현 (정직)
-역할별 **고정 pitch 패턴 스케줄러** + stretch.
-실제 MIDI part / chord-aware accompaniment / look-ahead scheduler는 없습니다.
+### 현재 구현 (P2) — 4계층
+1. **Score content** — 역할 pitch band의 MIDI 노트 우선, 부족하면 pattern fallback  
+2. **Transport** — `build_transport_map`: score time → performance time **누적 tempo 적분**  
+3. **Scheduler** — `plan_sessionist_schedule` + `schedule_lookahead`  
+4. **Live control** — `LiveSessionistController`  
+   - confidence 낮음 → `hold` / phrase maintain / safe-boundary `repeat`  
+   - 회복 시 downbeat `reenter`  
+5. **Renderer** — `audio/render.py` (play/fill/repeat/reenter)
+
+아직 없는 것: chord-aware voicing, audio time-stretch of recorded stems, true phase-locked audio buffer.
 
 | 모드 | 동작 |
 |------|------|
-| `FOLLOW` | stretch 추종 |
-| `ACCOMPANY` | 추종 + phrase-end fill (휴리스틱) |
-| `LEAD` / `INTERACT` | 스키마만 |
+| `FOLLOW` | tempo 추종 강함 |
+| `ACCOMPANY` | 추종 + phrase-end fill |
+| `LEAD` / `INTERACT` | 스키마·약한 추종 계수 |
 
 코드: `engines/sessionist.py`, `audio/render.py`
 
@@ -104,7 +111,7 @@ Who Led/Followed, Breakdown·Recovery, 합주 준비도, 실행 가능 코칭.
 |----------|------|
 | **P0** | README 정직화, path 가드, 업로드 제한, 예외 비노출, CORS, cleanup, 테스트 격리 ✅ |
 | **P1** | ScoreFollower DTW + score-matched signed deviation + windowed analytics ✅ |
-| **P2** | Sessionist 재설계 (content / transport / scheduler / renderer) |
+| **P2** | Sessionist 재설계 (content / transport / scheduler / live fail-safe) ✅ |
 | **P3** | DB / auth / queue / WebRTC 제품화 |
 
 관련: [`ARCHITECTURE.md`](ARCHITECTURE.md), [`API.md`](API.md)

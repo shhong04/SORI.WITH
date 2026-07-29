@@ -70,18 +70,24 @@ def render_schedule_to_audio(
             continue
         beat_dur = 60.0 / max(act.target_tempo, 1e-3)
         dur = max(0.03, act.duration_beats * beat_dur)
-        if act.action == "fill":
-            dur *= 1.2
+        if act.action in {"fill", "repeat", "reenter"}:
+            dur *= 1.15
         start = int(act.timestamp * sr)
         if start >= n:
             continue
+        vel = act.velocity
+        if act.action == "repeat":
+            vel = max(40, int(vel * 0.75))
         tone = _synth_tone(
             sr,
             dur,
             _midi_to_hz(act.pitch),
-            velocity=act.velocity,
+            velocity=vel,
             kind=act.role if act.role in {"drums", "bass", "keyboard", "guitar", "vocal"} else "bass",
         )
+        if act.action == "stop":
+            # defensive: should not reach here
+            tone *= np.linspace(1.0, 0.0, len(tone))
         end_i = min(n, start + len(tone))
         mix[start:end_i] += tone[: end_i - start]
 
