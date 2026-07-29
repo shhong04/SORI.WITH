@@ -2,27 +2,36 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SORI Ensemble Intelligence</title>
 <style>
   :root{
-    --bg:#0E0E0E;
-    --bg-elevated:#161616;
+    --bg:#0C0C0C;
+    --bg-elevated:#121212;
     --ink:#FFFFFF;
     --ink-soft:#E8E4DF;
-    --accent:#E54D42;
-    --accent-dim:rgba(229,77,66,0.18);
-    --card:rgba(255,255,255,0.05);
-    --card-border:rgba(255,255,255,0.08);
+    --accent:#E02020;
+    --accent-dim:rgba(224,32,32,0.18);
+    --card:rgba(255,255,255,0.035);
+    --card-border:rgba(255,255,255,0.09);
+    --glass-shadow:
+      0 8px 28px rgba(0,0,0,0.42),
+      0 0 16px rgba(255,255,255,0.02),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    --glass-blur: blur(18px) saturate(130%);
     --guitar:#E8823C;
     --bass:#5B8CFF;
-    --drums:#E54D42;
+    --drums:#E02020;
     --keyboard:#A078FF;
     --vocal:#3DBF6E;
-    --ai:#2A2A2A;
+    --ai:#222222;
     --muted:#9A9690;
-    --line:rgba(255,255,255,0.08);
-    --danger:#E54D42;
+    --line:rgba(255,255,255,0.06);
+    --danger:#E02020;
+    /* iPhone 15 / 16 logical points */
+    --iphone-w: 393px;
+    --iphone-h: 852px;
+    --iphone-ratio: 393 / 852;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:#050505;height:100%; overflow:hidden;}
@@ -34,36 +43,95 @@
     align-items:center;
     height:100vh;
     height:100dvh;
+    padding:24px 16px;
     background:
-      radial-gradient(900px 520px at 85% -10%, rgba(229,77,66,0.22), transparent 55%),
-      radial-gradient(700px 420px at 10% 100%, rgba(229,77,66,0.08), transparent 50%),
+      radial-gradient(900px 520px at 85% -10%, rgba(224,32,32,0.22), transparent 55%),
+      radial-gradient(700px 420px at 10% 100%, rgba(224,32,32,0.08), transparent 50%),
       #050505;
   }
   #phone{
-    width:100%;
-    max-width:430px;
-    height:100vh;
-    height:100dvh;
+    /* Keep iPhone portrait ratio; shrink to fit viewport */
+    width: min(var(--iphone-w), 100%, calc((100dvh - 48px) * 393 / 852));
+    aspect-ratio: var(--iphone-ratio);
+    height: auto;
+    max-height: calc(100dvh - 48px);
     background:
-      radial-gradient(720px 380px at 100% 0%, rgba(229,77,66,0.16), transparent 55%),
+      radial-gradient(720px 380px at 100% 0%, rgba(224,32,32,0.16), transparent 55%),
       var(--bg);
     position:relative;
     overflow:hidden;
     display:flex;
     flex-direction:column;
-    border-left:1px solid rgba(255,255,255,0.04);
-    border-right:1px solid rgba(255,255,255,0.04);
+    border-radius:44px;
+    border:3px solid #1a1a1a;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.06),
+      0 24px 64px rgba(0,0,0,0.55),
+      inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  #phone::before{
+    content:"";
+    position:absolute;
+    top:10px; left:50%;
+    transform:translateX(-50%);
+    width:118px; height:34px;
+    background:#050505;
+    border-radius:20px;
+    z-index:40;
+    pointer-events:none;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  #phone::after{
+    content:"";
+    position:absolute;
+    bottom:8px; left:50%;
+    transform:translateX(-50%);
+    width:134px; height:5px;
+    background:rgba(255,255,255,0.28);
+    border-radius:999px;
+    z-index:40;
+    pointer-events:none;
   }
   #screen{
     flex:1;
     min-height:0;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
-    padding:22px 20px 110px 20px;
+    padding:54px 20px 110px 20px;
     animation:fadeIn .35s ease;
+  }
+  /* Real iPhone: edge-to-edge, no fake chrome */
+  @media (max-width: 480px){
+    body{ padding:0; }
+    #phone{
+      width:100%;
+      height:100vh;
+      height:100dvh;
+      max-height:none;
+      aspect-ratio:auto;
+      border-radius:0;
+      border:none;
+      box-shadow:none;
+    }
+    #phone::before,
+    #phone::after{ display:none; }
+    #screen{
+      padding-top: max(22px, env(safe-area-inset-top));
+      padding-bottom: 110px;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+    }
   }
   @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
   h1.page-title{font-size:30px; font-weight:800; margin:6px 0 2px 0; letter-spacing:-0.02em;}
+  .brand-row{
+    display:flex; align-items:center;
+    margin:4px 0 18px 0;
+  }
+  .brand-wordmark{
+    height:26px; width:auto; max-width:200px; display:block;
+    object-fit:contain;
+  }
   p.page-sub{color:var(--muted); font-size:14px; margin:0 0 20px 0;}
 
   .badge{
@@ -73,7 +141,7 @@
     margin-bottom:14px;
   }
   .badge.online{ background:rgba(61,191,110,0.15); color:#5DDB8A; }
-  .badge.mock{ background:rgba(255,255,255,0.06); color:var(--muted); }
+  .badge.mock{ background:rgba(255,255,255,0.04); color:var(--muted); }
   .badge-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
 
   .card{
@@ -82,12 +150,13 @@
     border-radius:20px;
     padding:20px;
     margin-bottom:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.35);
-    backdrop-filter: blur(10px);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
   }
   .card:active{ transform:scale(0.99); }
   .card.tappable{ cursor:pointer; transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
-  .card.tappable:hover{ border-color:rgba(229,77,66,0.35); box-shadow:0 12px 34px rgba(0,0,0,0.45); }
+  .card.tappable:hover{ border-color:rgba(224,32,32,0.35); box-shadow:0 12px 34px rgba(0,0,0,0.45), 0 0 28px rgba(224,32,32,0.08), inset 0 1px 0 rgba(255,255,255,0.14); }
 
   .row{display:flex; align-items:center; justify-content:space-between;}
   .btn{
@@ -99,21 +168,30 @@
   }
   .btn:active{ transform:scale(0.97); }
   .btn-primary{ background:var(--accent); color:white; }
-  .btn-dark{ background:#1C1C1C; color:white; border:1px solid var(--card-border); }
+  .btn-dark{ background:#141414; color:white; border:1px solid var(--card-border); }
   .btn-outline{ background:transparent; color:var(--ink); border:1.5px solid var(--card-border); }
-  .btn-disabled{ background:rgba(255,255,255,0.06); color:#666; cursor:not-allowed; }
+  .btn-disabled{ background:rgba(255,255,255,0.04); color:#666; cursor:not-allowed; }
   .btn-sm{ padding:10px 14px; font-size:13px; border-radius:12px; width:auto; }
 
   .quick-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .quick-btn{
-    background:var(--card); border-radius:20px; padding:18px 14px;
+    background:var(--card); border-radius:16px; padding:12px 14px;
     text-align:left; border:1px solid var(--card-border); cursor:pointer;
     color:var(--ink);
-    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    display:flex; align-items:center; gap:10px;
   }
-  .quick-btn.wide{ grid-column:1 / span 2; background:var(--accent); color:white; }
-  .quick-icon{ font-size:22px; margin-bottom:8px; display:block; }
-  .quick-label{ font-weight:700; font-size:14px; }
+  .quick-btn.wide{
+    grid-column:1 / span 2;
+    background:linear-gradient(145deg, rgba(224,32,32,0.88), rgba(180,16,16,0.72));
+    color:white;
+    border-color:rgba(255,255,255,0.18);
+    box-shadow:0 10px 28px rgba(224,32,32,0.28), 0 0 24px rgba(224,32,32,0.12), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .quick-icon{ font-size:18px; margin:0; display:inline-flex; line-height:1; flex-shrink:0; }
+  .quick-label{ font-weight:700; font-size:13px; line-height:1.2; }
 
   .ring-wrap{ display:flex; align-items:center; gap:18px; }
   .ring{ position:relative; width:88px; height:88px; flex-shrink:0; }
@@ -125,7 +203,7 @@
 
   .mode-card{ display:flex; align-items:flex-start; gap:14px; }
   .mode-num{
-    width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.06); color:var(--accent);
+    width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.04); color:var(--accent);
     display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;
     flex-shrink:0;
   }
@@ -136,7 +214,9 @@
   .inst-btn{
     border-radius:20px; padding:18px 14px; border:2px solid var(--card-border);
     cursor:pointer; background:var(--card); text-align:left; color:var(--ink);
-    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     transition:transform .12s ease, border-color .12s ease;
   }
   .inst-btn:active{ transform:scale(0.97); }
@@ -157,7 +237,7 @@
   input.code-input{
     width:100%; font-size:26px; letter-spacing:0.25em; text-align:center;
     padding:16px; border-radius:16px; border:1.5px solid var(--card-border);
-    font-weight:800; text-transform:uppercase; background:#141414; color:var(--ink);
+    font-weight:800; text-transform:uppercase; background:#101010; color:var(--ink);
   }
   input.code-input:focus{ outline:none; border-color:var(--accent); }
   .err-text{ color:var(--accent); font-size:13px; margin-top:8px; text-align:center; font-weight:600; }
@@ -175,7 +255,7 @@
   .member-name{ font-weight:700; font-size:14px; }
   .member-role{ font-size:12px; color:var(--muted); }
   .status-pill{ font-size:11px; font-weight:700; padding:4px 10px; border-radius:10px; background:rgba(61,191,110,0.15); color:#5DDB8A; }
-  .status-pill.waiting{ background:rgba(255,255,255,0.06); color:var(--muted); }
+  .status-pill.waiting{ background:rgba(255,255,255,0.04); color:var(--muted); }
 
   .net-stat{ display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--line); }
   .net-stat:last-child{ border-bottom:none; }
@@ -183,6 +263,65 @@
   .net-stat .val{ font-weight:700; }
 
   .live-circle-wrap{ position:relative; width:100%; height:300px; margin-bottom:8px; }
+  .live-viz-wrap{
+    position:relative; width:100%; height:260px; margin-bottom:8px;
+    border-radius:16px; overflow:hidden;
+    background:#0A0A0A;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .live-viz-wrap canvas{
+    width:100%; height:100%; display:block;
+  }
+  .live-viz-legend{
+    display:flex; flex-wrap:wrap; gap:8px 12px;
+    justify-content:center; margin-top:10px;
+  }
+  .live-viz-legend span{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:11px; font-weight:700; color:var(--muted);
+  }
+  .live-viz-legend i{
+    width:8px; height:8px; border-radius:50%; display:inline-block;
+  }
+  .tempo-alert{
+    position:absolute; left:12px; right:12px; bottom:12px;
+    display:flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:14px;
+    background:rgba(10,10,10,0.88);
+    border:1px solid rgba(255,255,255,0.12);
+    box-shadow:0 8px 24px rgba(0,0,0,0.45), 0 0 18px rgba(224,32,32,0.2);
+    color:var(--ink);
+    opacity:0; transform:translateY(10px) scale(0.98);
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:5;
+  }
+  .tempo-alert.show{
+    opacity:1; transform:translateY(0) scale(1);
+  }
+  .tempo-alert-dot{
+    width:10px; height:10px; border-radius:50%; flex-shrink:0;
+    background:var(--alert-color, #E02020);
+    box-shadow:0 0 0 0 var(--alert-color, #E02020);
+    animation:tempoPulse 1.1s ease-out infinite;
+  }
+  @keyframes tempoPulse{
+    0%{ box-shadow:0 0 0 0 rgba(224,32,32,0.45); }
+    100%{ box-shadow:0 0 0 12px transparent; }
+  }
+  .tempo-alert-body{ flex:1; min-width:0; }
+  .tempo-alert-title{
+    font-size:12px; font-weight:800; color:var(--alert-color, #E02020);
+    margin-bottom:2px;
+  }
+  .tempo-alert-msg{ font-size:11px; color:var(--ink-soft); line-height:1.35; }
+  #phone.theme-light .live-viz-wrap{
+    background:#1A1816; border-color:rgba(22,20,18,0.12);
+  }
+  #phone.theme-light .tempo-alert{
+    background:rgba(255,255,255,0.96); color:#000000;
+  }
+  #phone.theme-light .tempo-alert-msg{ color:#111111; }
   .live-member{
     position:absolute; width:76px; text-align:center; transform:translate(-50%,-50%);
   }
@@ -204,36 +343,190 @@
     position:absolute; top:-4px; right:6px; background:var(--accent); color:white;
     font-size:8px; font-weight:800; padding:2px 5px; border-radius:6px;
   }
+  .ai-tag, .member-ai-badge{
+    font-size:8px; font-weight:800; background:var(--ai); color:white;
+    padding:3px 6px; border-radius:6px;
+  }
+  .member-ai-badge{
+    background:var(--accent); padding:2px 5px; border-radius:5px; margin-left:4px;
+  }
 
-  .report-score{ text-align:center; padding:10px 0 4px 0; }
-  .report-score .num{ font-size:56px; font-weight:800; line-height:1; }
-  .report-score .lab{ color:var(--muted); font-size:13px; margin-top:4px; }
+  .report-score{ text-align:center; padding:12px 4px 8px 4px; }
+  .report-score .num{ font-size:28px; font-weight:800; line-height:1; letter-spacing:-0.02em; }
+  .report-score .lab{ color:var(--muted); font-size:11px; margin-top:5px; }
 
-  .timeline-item{ display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .feedback-meta{
+    display:flex; flex-direction:column; gap:10px;
+    margin-top:12px; padding:12px 8px 4px 8px;
+    border-top:1px solid var(--line);
+    text-align:left;
+    overflow:visible;
+  }
+  .feedback-meta-pair{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .feedback-meta-block{
+    min-width:0;
+    padding:0 2px;
+  }
+  .feedback-meta-label{
+    display:block;
+    font-size:10px; font-weight:800; color:var(--accent);
+    margin-bottom:4px; letter-spacing:0;
+    line-height:1.2;
+  }
+  .feedback-meta-value{
+    font-size:12px; font-weight:700; color:var(--ink);
+    line-height:1.35;
+    word-break:keep-all;
+  }
+  .feedback-meta-value.soft{ font-weight:600; color:var(--ink-soft); }
+  .feedback-team-list{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:2px;
+  }
+  .feedback-team-chip{
+    font-size:11px; font-weight:700; color:var(--ink-soft);
+    background:rgba(255,255,255,0.05);
+    border:1.5px solid var(--card-border);
+    border-radius:999px;
+    padding:5px 9px;
+    line-height:1.2;
+  }
+  .feedback-team-chip .ai-sub{
+    font-weight:800;
+  }
+  .timeline-mention{
+    font-weight:700;
+  }
+  .timeline-item{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
   .timeline-item:last-child{ border-bottom:none; }
-  .timeline-time{ font-weight:800; font-size:13px; width:42px; flex-shrink:0; color:var(--accent); }
-  .timeline-text{ font-size:13px; line-height:1.5; }
+  .timeline-time{
+    font-weight:800; font-size:12px; width:46px; flex-shrink:0;
+    color:var(--accent); padding-top:1px;
+  }
+  .timeline-text{
+    font-size:13px; line-height:1.55; color:var(--ink-soft); font-weight:500;
+  }
+  .next-tip-row{
+    display:flex; gap:10px; padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .next-tip-row:last-child{ border-bottom:none; }
+  .next-tip-who{
+    flex-shrink:0; min-width:88px; max-width:100px;
+    font-size:11px; font-weight:800; color:var(--accent); line-height:1.35;
+  }
+  .next-tip-text{
+    flex:1; font-size:13px; line-height:1.55; color:var(--ink-soft); font-weight:500;
+  }
+  .attempt-chips{
+    display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px;
+  }
+  .attempt-chip{
+    border:1px solid var(--card-border); background:rgba(255,255,255,0.04);
+    color:var(--muted); border-radius:999px; padding:7px 12px;
+    font-size:12px; font-weight:700; cursor:pointer;
+  }
+  .attempt-chip.active{
+    background:var(--accent); color:#fff; border-color:var(--accent);
+  }
+  .score-progress{
+    margin-top:8px; padding-top:4px;
+  }
+  .score-progress-svg{ width:100%; height:88px; display:block; }
+  .score-progress-meta{
+    display:flex; justify-content:space-between; gap:8px;
+    font-size:11px; color:var(--muted); margin-top:6px; font-weight:600;
+  }
+  .fill-row.selected-fill{
+    background:rgba(224,32,32,0.08);
+    border-radius:12px; margin:0 -8px; padding-left:8px; padding-right:8px;
+  }
+  .fill-check{
+    width:22px; height:22px; border-radius:7px; border:1.5px solid var(--card-border);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:800; color:transparent; flex-shrink:0;
+  }
+  .fill-row.selected-fill .fill-check{
+    background:var(--accent); border-color:var(--accent); color:#fff;
+  }
+
+  .session-pick{
+    display:flex; flex-direction:column; gap:10px; margin-bottom:16px;
+  }
+  .session-card{
+    text-align:left; width:100%; cursor:pointer;
+    background:var(--card); border:1px solid var(--card-border); border-radius:16px;
+    padding:14px 16px; color:var(--ink);
+    display:flex; align-items:flex-start; gap:12px;
+    box-shadow:var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    transition:border-color .15s ease, box-shadow .15s ease, transform .12s ease;
+  }
+  .session-card:active{ transform:scale(0.99); }
+  .session-card.selected{
+    border-color:rgba(224,32,32,0.55);
+    box-shadow:0 8px 28px rgba(0,0,0,0.35), 0 0 22px rgba(224,32,32,0.14), inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  .session-card .session-body{ flex:1; min-width:0; }
+  .session-card .session-date{ font-size:11px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+  .session-card .session-song{ font-weight:800; font-size:15px; margin-bottom:4px; }
+  .session-card .session-team{ font-size:12px; color:var(--muted); line-height:1.4; }
+  .session-card .session-score-mini{
+    font-weight:800; font-size:18px; color:var(--ink-soft); flex-shrink:0; padding-top:2px;
+  }
 
   #tabbar{
     position:absolute; bottom:0; left:0; right:0;
     display:flex; align-items:flex-end; justify-content:space-around;
-    padding:10px 8px 22px 8px; background:rgba(14,14,14,0.92);
-    backdrop-filter:blur(14px); border-top:1px solid var(--line);
+    padding:10px 10px 28px 10px; background:rgba(6,6,6,0.92);
+    backdrop-filter:blur(18px) saturate(120%);
+    -webkit-backdrop-filter:blur(18px) saturate(120%);
+    border-top:1px solid rgba(255,255,255,0.04);
+    z-index:30;
+  }
+  @media (max-width: 480px){
+    #tabbar{ padding-bottom: max(22px, calc(10px + env(safe-area-inset-bottom))); }
   }
   .tab-item{
     display:flex; flex-direction:column; align-items:center; gap:3px;
-    background:none; border:none; cursor:pointer; color:var(--muted);
-    font-size:10px; font-weight:600; padding:4px 6px;
+    background:rgba(18,18,18,0.92); border:1px solid rgba(255,255,255,0.05);
+    cursor:pointer; color:#6E6B66;
+    font-size:10px; font-weight:600; padding:8px 10px;
+    border-radius:14px; min-width:52px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: color .15s ease, border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  .tab-item.active{ color:var(--ink); }
-  .tab-icon{ font-size:19px; }
+  .tab-item.active{
+    color:#D8D4CF;
+    background:rgba(28,28,28,0.98);
+    border-color:rgba(255,255,255,0.08);
+    box-shadow:0 6px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .tab-icon{ font-size:17px; display:flex; align-items:center; justify-content:center; height:22px; }
   .tab-item.center{
-    background:var(--accent); color:white; border-radius:50%;
-    width:56px; height:56px; margin-top:-26px; justify-content:center;
-    box-shadow:0 6px 16px rgba(217,44,44,0.4);
+    background:linear-gradient(160deg, rgba(140,12,12,0.96), rgba(70,6,6,0.94));
+    color:white; border-radius:50%;
+    width:56px; height:56px; min-width:56px; margin-top:-26px; justify-content:center;
+    padding:0; border:1px solid rgba(255,255,255,0.1);
+    box-shadow:0 8px 20px rgba(0,0,0,0.55), 0 0 14px rgba(224,32,32,0.18), inset 0 1px 0 rgba(255,255,255,0.1);
   }
-  .tab-item.center .tab-icon{ font-size:24px; }
+  .tab-item.center.active,
+  .tab-item.center:active{
+    box-shadow:0 10px 24px rgba(0,0,0,0.6), 0 0 18px rgba(224,32,32,0.22), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .tab-item.center .tab-icon{ font-size:24px; height:auto; }
   .tab-item.center span:last-child{ display:none; }
+  .ai-bars-logo{
+    width:22px; height:22px; display:block;
+  }
+  .ai-bars-logo rect{ fill:#fff; }
 
   .backbtn{
     background:none;border:none;cursor:pointer;font-size:15px;font-weight:700;
@@ -259,7 +552,9 @@
   .ai-mini-btn{
     border-radius:16px; padding:12px 8px; border:2px solid var(--card-border);
     cursor:pointer; background:var(--card); text-align:center; color:var(--ink);
-    box-shadow:0 6px 16px rgba(0,0,0,0.25);
+    box-shadow:var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     transition:transform .12s ease, border-color .12s ease;
   }
   .ai-mini-btn:active{ transform:scale(0.96); }
@@ -270,7 +565,7 @@
 
   .style-grid{ display:flex; flex-wrap:wrap; gap:8px; }
   .style-chip{
-    padding:10px 16px; border-radius:20px; border:1.5px solid var(--card-border); background:rgba(255,255,255,0.04);
+    padding:10px 16px; border-radius:20px; border:1.5px solid var(--card-border); background:rgba(255,255,255,0.025);
     font-size:13px; font-weight:700; cursor:pointer; color:var(--ink-soft);
     transition:all .12s ease;
   }
@@ -286,16 +581,18 @@
     display:flex;align-items:center;justify-content:center; font-size:19px; color:white; position:relative;
   }
   .ai-status-avatar .ai-glow-ring{
-    position:absolute; inset:-4px; border-radius:16px; border:2px solid var(--accent);
+    position:absolute; inset:-4px; border-radius:16px;
+    border:2px solid var(--glow-color, var(--accent));
     opacity:0; animation:aiGlowPulse 1.6s ease-out infinite;
+    box-shadow:0 0 10px var(--glow-color, var(--accent));
   }
   @keyframes aiGlowPulse{ 0%{opacity:.7; transform:scale(0.92);} 100%{opacity:0; transform:scale(1.22);} }
   .ai-status-name{ font-weight:800; font-size:13px; margin-bottom:3px; }
   .ai-status-tags{ display:flex; gap:5px; flex-wrap:wrap; margin-bottom:5px; }
-  .ai-status-tag{ font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; background:rgba(255,255,255,0.06); color:var(--muted); }
+  .ai-status-tag{ font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; background:rgba(255,255,255,0.04); color:var(--muted); }
   .ai-status-meta{ font-size:11px; color:var(--muted); display:flex; gap:10px; }
 
-  .live-avatar.ai-glow{ box-shadow:0 0 0 0 rgba(217,44,44,0.5); }
+  .live-avatar.ai-glow{ box-shadow:0 0 0 0 rgba(224,32,32,0.5); }
   .live-avatar.ai-glow::after{
     content:''; position:absolute; inset:-6px; border-radius:50%;
     border:2px solid var(--accent); opacity:0; animation:pulseRingAi 1.5s ease-out infinite;
@@ -306,14 +603,471 @@
   .fill-row:last-child{ border-bottom:none; }
   .fill-row-left{ display:flex; align-items:center; gap:12px; }
 
-  .toggle-switch{ width:44px; height:26px; border-radius:14px; background:#2A2A2A; border:none; position:relative; cursor:pointer; transition:background .2s ease; padding:0; flex-shrink:0; }
+  .toggle-switch{ width:44px; height:26px; border-radius:14px; background:#1A1A1A; border:none; position:relative; cursor:pointer; transition:background .2s ease; padding:0; flex-shrink:0; }
   .toggle-switch.on{ background:var(--accent); }
   .toggle-knob{ position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:var(--card); transition:left .2s ease; box-shadow:0 1px 3px rgba(0,0,0,0.2); display:block; }
   .toggle-switch.on .toggle-knob{ left:21px; }
+
+  .profile-hero{
+    display:flex; align-items:center; gap:14px;
+    padding:14px 16px !important;
+  }
+  .profile-avatar{
+    width:48px; height:48px; border-radius:50%; flex-shrink:0;
+    background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:17px; font-weight:800;
+  }
+  .profile-hero-text{ min-width:0; flex:1; }
+  .profile-hero-name{
+    font-weight:800; font-size:16px; line-height:1.2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .profile-hero-email{
+    color:var(--muted); font-size:12px; margin-top:3px; font-weight:500;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .settings-section{
+    font-size:13px; font-weight:600; color:var(--muted);
+    margin:18px 4px 8px; letter-spacing:-0.01em;
+  }
+  .settings-section:first-of-type{ margin-top:8px; }
+  .settings-card{
+    padding:2px 0 !important;
+    overflow:hidden;
+  }
+  .settings-row{
+    display:flex; align-items:center; gap:12px;
+    width:100%; padding:12px 14px;
+    border:none; background:transparent; color:var(--ink);
+    text-align:left; cursor:pointer; font:inherit;
+    position:relative;
+  }
+  .settings-row + .settings-row::before{
+    content:"";
+    position:absolute; top:0; left:54px; right:0;
+    height:1px; background:var(--line);
+  }
+  .settings-row-icon{
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    border:1.5px solid rgba(255,255,255,0.35);
+    color:var(--ink);
+  }
+  .settings-row-icon svg{
+    width:14px; height:14px; stroke:currentColor; fill:none;
+    stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .settings-row-label{
+    flex:1; font-size:15px; font-weight:500; min-width:0;
+  }
+  .settings-row-meta{
+    color:var(--muted); font-size:14px; font-weight:500; flex-shrink:0;
+  }
+  .settings-row-chevron{
+    color:var(--muted); font-size:18px; font-weight:300; line-height:1; opacity:0.7;
+    flex-shrink:0; margin-left:2px;
+  }
+  .settings-plain{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; color:var(--ink);
+  }
+  .settings-plain-label{ font-size:15px; font-weight:500; }
+  .settings-plain-value{ font-size:15px; font-weight:500; color:var(--muted); }
+
+  .playlist-section{ font-weight:800; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin:18px 0 10px 0; }
+  .playlist-section:first-of-type{ margin-top:4px; }
+  .song-row{
+    display:flex; align-items:center; gap:12px; padding:12px 0;
+    border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .song-row:last-child{ border-bottom:none; }
+  .song-pick.selected .song-title{ color:var(--accent); }
+  .song-pick.selected .song-score{ color:var(--accent); font-size:16px; }
+  .song-cover{
+    width:48px; height:48px; border-radius:12px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; color:white; font-weight:800;
+    background:linear-gradient(145deg, #222222, #141414);
+    border:1px solid var(--card-border);
+  }
+  .song-cover.current{ background:linear-gradient(145deg, #E02020, #8B1010); border-color:transparent; }
+  .song-meta{ flex:1; min-width:0; }
+  .song-title{ font-weight:800; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song-sub{ font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .song-score{ font-weight:800; font-size:13px; color:var(--ink-soft); flex-shrink:0; }
+  .yt-badge{
+    display:inline-flex; align-items:center; gap:3px;
+    font-size:9px; font-weight:800; letter-spacing:0.02em;
+    padding:2px 6px; border-radius:5px; vertical-align:middle;
+    background:#FF0000; color:#fff; margin-left:6px;
+  }
+  .add-song-panel{ margin-top:4px; }
+  .yt-header{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .yt-mark{
+    width:34px; height:24px; border-radius:8px; background:#FF0000;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    box-shadow:0 4px 14px rgba(255,0,0,0.35);
+  }
+  .yt-mark svg{ width:12px; height:12px; fill:#fff; margin-left:1px; }
+  .yt-header-text{ font-weight:800; font-size:14px; }
+  .yt-header-sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .yt-search-row{ display:flex; gap:8px; margin-bottom:10px; }
+  .yt-search-row .song-input{ margin-bottom:0; flex:1; }
+  input.song-input{
+    width:100%; font-size:14px; padding:13px 14px; border-radius:14px;
+    border:1.5px solid var(--card-border); background:#101010; color:var(--ink);
+    font-weight:600;
+  }
+  input.song-input:focus{ outline:none; border-color:#FF0000; }
+  input.song-input::placeholder{ color:var(--muted); font-weight:500; }
+  .yt-divider{
+    display:flex; align-items:center; gap:10px;
+    color:var(--muted); font-size:11px; font-weight:700;
+    margin:12px 0;
+  }
+  .yt-divider::before, .yt-divider::after{
+    content:""; flex:1; height:1px; background:var(--line);
+  }
+  .yt-result{
+    display:flex; gap:12px; width:100%; text-align:left;
+    padding:10px 0; border:none; background:none; color:var(--ink);
+    cursor:pointer; border-bottom:1px solid var(--line);
+  }
+  .yt-result:last-child{ border-bottom:none; }
+  .yt-result:active{ opacity:0.85; }
+  .yt-thumb{
+    width:96px; height:54px; border-radius:10px; flex-shrink:0;
+    position:relative; overflow:hidden;
+    background:linear-gradient(135deg, #2c2c2c, #141414);
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .yt-thumb-bars{
+    position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; gap:3px;
+    padding:10px 12px 8px; opacity:0.35;
+  }
+  .yt-thumb-bars span{
+    width:4px; border-radius:2px; background:#fff; display:block;
+  }
+  .yt-duration{
+    position:absolute; right:5px; bottom:5px;
+    background:rgba(0,0,0,0.82); color:#fff;
+    font-size:9px; font-weight:700; padding:2px 4px; border-radius:3px;
+  }
+  .yt-play{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0.9;
+  }
+  .yt-play svg{ width:18px; height:18px; fill:#fff; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+  .yt-result-meta{ flex:1; min-width:0; padding-top:2px; }
+  .yt-result-title{
+    font-weight:700; font-size:13px; line-height:1.35;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .yt-result-ch{ font-size:11px; color:var(--muted); margin-top:4px; }
+  .yt-result-stat{ font-size:10px; color:var(--muted); margin-top:2px; }
+  .yt-empty, .yt-loading{
+    text-align:center; padding:18px 8px; color:var(--muted); font-size:13px;
+  }
+  .yt-import-hint{
+    font-size:11px; color:var(--muted); margin-top:8px; line-height:1.4;
+  }
+
+  /* ---------- Light theme ---------- */
+  body.theme-light{
+    --ink:#000000;
+    --ink-soft:#111111;
+    --muted:#4A4640;
+    color:#000000;
+    background:
+      radial-gradient(900px 520px at 85% -10%, rgba(224,32,32,0.12), transparent 55%),
+      radial-gradient(700px 420px at 10% 100%, rgba(224,32,32,0.05), transparent 50%),
+      #E8E4DF;
+  }
+  #phone.theme-light{
+    --bg:#F4F2EE;
+    --bg-elevated:#FFFFFF;
+    --ink:#000000;
+    --ink-soft:#111111;
+    --card:rgba(255,255,255,0.88);
+    --card-border:rgba(0,0,0,0.12);
+    --glass-shadow:
+      0 8px 24px rgba(0,0,0,0.08),
+      0 0 12px rgba(255,255,255,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    --glass-blur: blur(16px) saturate(140%);
+    --muted:#4A4640;
+    --line:rgba(0,0,0,0.1);
+    --ai:#2A2A2A;
+    --accent-dim:rgba(224,32,32,0.12);
+    color:#000000;
+    background:
+      radial-gradient(720px 380px at 100% 0%, rgba(224,32,32,0.08), transparent 55%),
+      var(--bg);
+    border-color:#2a2a2a;
+  }
+  /* Force former white UI text → black in light mode */
+  #phone.theme-light,
+  #phone.theme-light .page-title,
+  #phone.theme-light .page-sub,
+  #phone.theme-light .backbtn,
+  #phone.theme-light .mode-title,
+  #phone.theme-light .mode-desc,
+  #phone.theme-light .quick-btn,
+  #phone.theme-light .quick-label,
+  #phone.theme-light .roomcode,
+  #phone.theme-light .member-name,
+  #phone.theme-light .member-role,
+  #phone.theme-light .song-title,
+  #phone.theme-light .song-sub,
+  #phone.theme-light .song-score,
+  #phone.theme-light .song-cover,
+  #phone.theme-light .inst-name,
+  #phone.theme-light .report-score .num,
+  #phone.theme-light .report-score .lab,
+  #phone.theme-light .session-song,
+  #phone.theme-light .session-team,
+  #phone.theme-light .session-score-mini,
+  #phone.theme-light .timeline-text,
+  #phone.theme-light .next-tip-text,
+  #phone.theme-light .feedback-meta-value,
+  #phone.theme-light .feedback-meta-value.soft,
+  #phone.theme-light .ai-status-name,
+  #phone.theme-light .ai-status-meta,
+  #phone.theme-light .ai-status-tag,
+  #phone.theme-light .ai-mini-btn .inst-name,
+  #phone.theme-light .playlist-section,
+  #phone.theme-light .loading-text,
+  #phone.theme-light .placeholder-box,
+  #phone.theme-light .yt-result,
+  #phone.theme-light .yt-result-title,
+  #phone.theme-light .yt-result-ch,
+  #phone.theme-light .yt-result-stat,
+  #phone.theme-light .yt-import-hint,
+  #phone.theme-light .yt-empty,
+  #phone.theme-light .yt-loading,
+  #phone.theme-light .yt-header-text,
+  #phone.theme-light .yt-header-sub,
+  #phone.theme-light .yt-divider,
+  #phone.theme-light .net-stat .lab,
+  #phone.theme-light .net-stat .val,
+  #phone.theme-light .fill-row,
+  #phone.theme-light .ring-label,
+  #phone.theme-light .score-progress-meta,
+  #phone.theme-light .attempt-chip,
+  #phone.theme-light .style-chip,
+  #phone.theme-light .live-name,
+  #phone.theme-light .live-bpm,
+  #phone.theme-light .live-viz-legend span,
+  #phone.theme-light .status-pill.waiting,
+  #phone.theme-light .badge.mock,
+  #phone.theme-light .btn-outline,
+  #phone.theme-light .card,
+  #phone.theme-light .mode-card,
+  #phone.theme-light input.code-input,
+  #phone.theme-light input.song-input{
+    color:#000000;
+  }
+  #phone.theme-light .page-sub,
+  #phone.theme-light .mode-desc,
+  #phone.theme-light .song-sub,
+  #phone.theme-light .session-team,
+  #phone.theme-light .member-role,
+  #phone.theme-light .report-score .lab,
+  #phone.theme-light .playlist-section,
+  #phone.theme-light .yt-result-ch,
+  #phone.theme-light .yt-result-stat,
+  #phone.theme-light .yt-header-sub,
+  #phone.theme-light .yt-divider,
+  #phone.theme-light .loading-text,
+  #phone.theme-light .placeholder-box,
+  #phone.theme-light .ai-status-meta,
+  #phone.theme-light .ai-status-tag,
+  #phone.theme-light .status-pill.waiting,
+  #phone.theme-light .live-bpm,
+  #phone.theme-light .badge.mock,
+  #phone.theme-light .net-stat .lab{
+    color:#222222;
+  }
+  #phone.theme-light .feedback-meta-value.soft,
+  #phone.theme-light .timeline-text,
+  #phone.theme-light .next-tip-text{
+    color:#111111;
+  }
+  #phone.theme-light .session-date,
+  #phone.theme-light .ai-section-label,
+  #phone.theme-light .ai-mini-btn .check,
+  #phone.theme-light .err-text,
+  #phone.theme-light .timeline-time,
+  #phone.theme-light .feedback-meta-label{
+    color:var(--accent);
+  }
+  #phone.theme-light .status-pill:not(.waiting){
+    color:#1A7A3A;
+  }
+  /* keep white text only on saturated / dark surfaces */
+  #phone.theme-light .btn-primary,
+  #phone.theme-light .btn-dark,
+  #phone.theme-light .quick-btn.wide,
+  #phone.theme-light .quick-btn.wide .quick-label,
+  #phone.theme-light .attempt-chip.active,
+  #phone.theme-light .style-chip.selected,
+  #phone.theme-light .tab-item.center,
+  #phone.theme-light .ai-badge,
+  #phone.theme-light .ai-tag,
+  #phone.theme-light .yt-badge,
+  #phone.theme-light .yt-play,
+  #phone.theme-light .song-cover.current,
+  #phone.theme-light .fill-row.selected-fill .fill-check,
+  #phone.theme-light .member-ai-badge{
+    color:#FFFFFF;
+  }
+  #phone.theme-light input.code-input,
+  #phone.theme-light input.song-input{
+    background:#FFFFFF;
+    border-color:rgba(22,20,18,0.14);
+    color:#000000;
+  }
+  #phone.theme-light input.song-input::placeholder{
+    color:#6A645C;
+  }
+  #phone.theme-light #tabbar{
+    background:rgba(244,242,238,0.92);
+    border-top:1px solid rgba(22,20,18,0.08);
+  }
+  #phone.theme-light .tab-item{
+    background:rgba(255,255,255,0.72);
+    border-color:rgba(22,20,18,0.08);
+    color:#8A847C;
+    box-shadow:0 4px 12px rgba(22,20,18,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  #phone.theme-light .tab-item.active{
+    color:#000000;
+    background:rgba(255,255,255,0.95);
+    border-color:rgba(22,20,18,0.12);
+    box-shadow:0 6px 14px rgba(22,20,18,0.1), inset 0 1px 0 #fff;
+  }
+  #phone.theme-light .tab-item.center{
+    background:linear-gradient(160deg, rgba(200,18,18,0.96), rgba(120,8,8,0.94));
+    border-color:rgba(255,255,255,0.2);
+    box-shadow:0 8px 20px rgba(224,32,32,0.28), inset 0 1px 0 rgba(255,255,255,0.2);
+    color:#FFFFFF;
+  }
+  #phone.theme-light .btn-dark{
+    background:#111111; color:#FFFFFF; border-color:rgba(22,20,18,0.12);
+  }
+  #phone.theme-light .btn-outline{
+    border-color:rgba(22,20,18,0.14); color:#000000;
+  }
+  #phone.theme-light .btn-disabled{
+    background:rgba(22,20,18,0.06); color:#A09A92;
+  }
+  #phone.theme-light .feedback-team-chip{
+    background:rgba(0,0,0,0.04);
+  }
+  #phone.theme-light .mode-num{
+    background:rgba(22,20,18,0.06);
+  }
+  #phone.theme-light .badge.mock{
+    background:rgba(22,20,18,0.06);
+  }
+  #phone.theme-light .status-pill.waiting,
+  #phone.theme-light .ai-status-tag,
+  #phone.theme-light .style-chip{
+    background:rgba(22,20,18,0.05);
+  }
+  #phone.theme-light .toggle-switch{
+    background:#D4CFC8;
+  }
+  #phone.theme-light .toggle-knob{
+    background:#FFFFFF;
+  }
+  #phone.theme-light .song-cover{
+    background:linear-gradient(145deg, #E4DFD8, #CEC7BE);
+    color:#000000;
+    border-color:rgba(22,20,18,0.08);
+  }
+  #phone.theme-light .song-cover.current{
+    background:linear-gradient(145deg, #E02020, #8B1010);
+    color:#fff;
+  }
+  #phone.theme-light .yt-thumb{
+    background:linear-gradient(135deg, #D8D2CA, #B8B0A6);
+    border-color:rgba(22,20,18,0.08);
+  }
+  #phone.theme-light .spinner{
+    border-color:rgba(22,20,18,0.1); border-top-color:var(--accent);
+  }
+  #phone.theme-light .settings-row-icon{
+    border-color:rgba(22,20,18,0.28);
+    color:#000000;
+  }
+  #phone.theme-light .settings-row,
+  #phone.theme-light .settings-plain,
+  #phone.theme-light .profile-hero-name{
+    color:#000000;
+  }
+  #phone.theme-light .card.tappable:hover{
+    box-shadow:0 12px 28px rgba(0,0,0,0.1), 0 0 20px rgba(224,32,32,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+
+  /* Splash */
+  #splash{
+    position:absolute; inset:0; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 48%, rgba(90,10,10,0.45), transparent 70%),
+      #050202;
+    opacity:1;
+    transition: opacity .75s cubic-bezier(0.4, 0, 0.2, 1),
+                transform .75s cubic-bezier(0.4, 0, 0.2, 1),
+                filter .75s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #splash.hide{
+    opacity:0;
+    pointer-events:none;
+    transform:scale(1.03);
+    filter:blur(6px);
+  }
+  #splash.gone{ display:none; }
+  .splash-brand{
+    display:flex; align-items:flex-end; gap:0;
+  }
+  .splash-sori-img{
+    height:44px; width:auto; display:block;
+    opacity:0;
+    transform:translateY(6px) scale(0.96);
+    transition: opacity .7s cubic-bezier(0.22, 1, 0.36, 1),
+                transform .7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .splash-sori-img.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  .splash-with-img{
+    height:34px; width:auto; display:block;
+    margin-left:4px; margin-bottom:2px;
+    opacity:0;
+    transform:translateX(-6px);
+    transition: opacity .65s cubic-bezier(0.22, 1, 0.36, 1),
+                transform .65s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .splash-with-img.show{
+    opacity:1;
+    transform:translateX(0);
+  }
 </style>
 </head>
 <body>
 <div id="phone">
+  <div id="splash" aria-hidden="true">
+    <div class="splash-brand">
+      <img class="splash-sori-img" id="splashSoriImg" src="/web/sori-wordmark-sori.png" alt="SORI." />
+      <img class="splash-with-img" id="splashWith" src="/web/sori-wordmark-with.png" alt="WITH" />
+    </div>
+  </div>
   <div id="screen"></div>
   <div id="tabbar"></div>
 </div>
@@ -326,7 +1080,7 @@ const API_BASE = (typeof location !== "undefined" && location.protocol.startsWit
 const INSTRUMENTS = [
   {id:"guitar", name:"기타", emoji:"🎸", color:"var(--guitar)", hex:"#E8823C"},
   {id:"bass", name:"베이스", emoji:"🎸", color:"var(--bass)", hex:"#3C6FE8"},
-  {id:"drums", name:"드럼", emoji:"🥁", color:"var(--drums)", hex:"#D92C2C"},
+  {id:"drums", name:"드럼", emoji:"🥁", color:"var(--drums)", hex:"#E02020"},
   {id:"keyboard", name:"키보드", emoji:"🎹", color:"var(--keyboard)", hex:"#8E4CE8"},
   {id:"vocal", name:"보컬", emoji:"🎤", color:"var(--vocal)", hex:"#3CA35A"},
 ];
@@ -355,7 +1109,129 @@ let state = {
   aiStyle: null,
   subMode: null,
   notificationsOn: true,
-  darkModeOn: true,
+  darkModeOn: localStorage.getItem("SORI_DARK_MODE") !== "0",
+  playlistAdding: false,
+  selectedSongId: null,
+  ytQuery: "",
+  ytUrl: "",
+  ytSearching: false,
+  ytResults: [],
+  selectedReportId: "rs1c",
+  selectedReportSong: "Autumn Leaves",
+  aiFillSelected: [],
+  reportSessions: [
+    {
+      id:"rs1a", attempt:1, date:"2026년 7월 10일", song:"Autumn Leaves",
+      team:[
+        {instrument:"기타", nickname:"넙죽"},
+        {instrument:"베이스", nickname:"AI", isAi:true, absentNickname:"카이"},
+        {instrument:"드럼", nickname:"넙순"},
+      ],
+      score:71, leader:"드럼",
+      timeline:[
+        {t:"0:38", text:"첫 코러스에서 넙죽(기타)이 템포를 약 120ms 늦게 잡으며 전체 그루브가 뒤로 밀렸어요. 메트로놈과 함께 진입하는 감각이 아직 안정되지 않은 상태였어요."},
+        {t:"0:44", text:"카이(베이스)가 결석해 AI 베이스가 대신 들어갔고, AI와 넙순(드럼)이 서로 다른 기준으로 따라가며 저음과 킥이 어긋났어요. 리더가 명확하지 않아 팀이 공통 펄스를 잃는 구간이 길었어요."},
+        {t:"0:50", text:"드럼이 강제로 템포를 끌어올리며 재정렬을 시도했지만, 기타 솔로 프레이즈가 잘려 표현이 급해졌어요."},
+        {t:"0:57", text:"세션 후반에야 세 파트가 느슨하게 맞춰졌지만, 전반 붕괴로 앙상블 점수가 낮게 나왔어요. 다음엔 시작 전 공통 BPM 확인이 꼭 필요해요."},
+      ],
+      nextTips:[
+        {who:"팀 전체", tip:"시작 전 4마디 클릭을 함께 듣고, 구두로 BPM을 말한 뒤 들어가세요."},
+        {who:"기타 (넙죽)", tip:"코러스 첫 두 마디만 메트로놈과 루프 연습하세요."},
+      ],
+    },
+    {
+      id:"rs1b", attempt:2, date:"2026년 7월 18일", song:"Autumn Leaves",
+      team:[
+        {instrument:"기타", nickname:"넙죽"},
+        {instrument:"베이스", nickname:"카이"},
+        {instrument:"드럼", nickname:"AI", isAi:true, absentNickname:"넙순"},
+      ],
+      score:79, leader:"베이스",
+      timeline:[
+        {t:"0:40", text:"시작 템포는 안정적이었지만, 코러스 직전 넙죽(기타)이 여전히 약 60ms 늦게 들어왔어요. 1회차보다 개선됐지만 같은 지점이 반복됐어요."},
+        {t:"0:46", text:"카이(베이스)가 이번엔 바로 따라가지 않고 한 박을 버텼어요. 좋은 판단이었고, 팀 붕괴는 짧게 끝났어요."},
+        {t:"0:49", text:"넙순(드럼)이 결석해 AI 드럼이 대신했고, 하이햇이 기준점으로 잘 작동해 팀이 빠르게 재정렬됐어요."},
+        {t:"0:54", text:"전반적인 싱크는 올랐지만, 기타의 코러스 진입만 집중 보완하면 80점대를 안정적으로 넘길 수 있어요."},
+      ],
+      nextTips:[
+        {who:"기타 (넙죽)", tip:"코러스 진입만 따로 10회 반복하고, 클릭보다 앞쪽 감각으로 들어가세요."},
+        {who:"베이스 (카이)", tip:"지금처럼 ‘즉시 따라가지 않기’ 전략을 솔로 구간에도 적용해보세요."},
+      ],
+    },
+    {
+      id:"rs1c", attempt:3, date:"2026년 7월 28일", song:"Autumn Leaves",
+      team:[{instrument:"기타", nickname:"넙죽"},{instrument:"베이스", nickname:"카이"},{instrument:"드럼", nickname:"넙순"}],
+      score:87, leader:"드럼",
+      timeline:[
+        {t:"0:42", text:"코러스 진입 직전, 넙죽(기타)이 다운비트보다 약 90ms 늦게 들어왔어요. 앞 소절의 마지막 코드를 길게 끌면서 호흡이 밀린 흔적이 보여요. 다음엔 그 코드 길이를 한 박 짧게 잡고 미리 준비해보세요."},
+        {t:"0:45", text:"카이(베이스)가 기타의 늦은 타이밍을 감지하고 한 박자 동안 그루브를 살짝 늘려 따라갔어요. 덕분에 붕괴는 막았지만, 베이스 본연의 펄스가 흐려져 저음 라인이 약간 무거워졌어요."},
+        {t:"0:48", text:"넙순(드럼)은 하이햇과 킥의 원래 펄스를 유지한 채 스네어만 살짝 열어 공간을 만들었어요. 리더 역할로 템포 기준을 지킨 덕분에 팀이 다시 모일 여지가 생겼어요."},
+        {t:"0:51", text:"세 파트가 다시 한 박자 안에서 정렬됐고, 앙상블 싱크 점수가 급격히 회복됐어요. 다만 기타의 다음 솔로 진입 타이밍은 여전히 늦게 올 위험이 있어 미리 카운트를 맞춰두면 좋아요."},
+      ],
+      nextTips:[
+        {who:"기타 (넙죽)", tip:"코러스 직전 코드는 한 박 짧게 끊고, 메트로놈 클릭 앞쪽으로 진입하는 연습을 2분씩 해보세요."},
+        {who:"베이스 (카이)", tip:"상대가 밀려도 첫 두 박은 원래 템포를 유지한 뒤, 그다음 박부터만 미세 조정하는 패턴을 연습해보세요."},
+        {who:"드럼 (넙순)", tip:"리더로서 하이햇 8분음표를 더 또렷하게 유지하면, 팀이 따라올 기준점이 더 분명해져요."},
+        {who:"팀 전체", tip:"다음 세션은 Autumn Leaves 코러스만 루프하며, 진입 카운트(1-2-3-4)를 함께 소리 내어 맞추고 시작하세요."},
+      ],
+    },
+    {
+      id:"rs2a", attempt:1, date:"2026년 7월 12일", song:"So What",
+      team:[{instrument:"기타", nickname:"넙죽"},{instrument:"베이스", nickname:"카이"},{instrument:"키보드", nickname:"넙순"},{instrument:"드럼", nickname:"아싯"}],
+      score:74, leader:"베이스",
+      timeline:[
+        {t:"1:02", text:"넙순(키보드) 솔로 진입이 거의 한 박 빨랐고, 다른 파트와 하모니가 겹치며 밀도가 과해졌어요."},
+        {t:"1:10", text:"카이(베이스)가 공간을 만들려 했지만 워킹이 여전히 촘촘해 키보드와 충돌이 이어졌어요."},
+        {t:"1:16", text:"아싯(드럼)의 가속으로 템포가 체감 5% 빨라졌고, 솔로 후반이 급해졌어요."},
+        {t:"1:22", text:"헤드 복귀에서야 정렬됐지만, 솔로 교대 큐가 없어 같은 실수가 반복될 위험이 커요."},
+      ],
+      nextTips:[
+        {who:"키보드 (넙순)", tip:"솔로 시작 전 한 마디를 비우고 들어가세요."},
+        {who:"팀 전체", tip:"솔로 교대 손짓 큐를 정한 뒤 리허설하세요."},
+      ],
+    },
+    {
+      id:"rs2b", attempt:2, date:"2026년 7월 25일", song:"So What",
+      team:[{instrument:"기타", nickname:"넙죽"},{instrument:"베이스", nickname:"카이"},{instrument:"키보드", nickname:"넙순"},{instrument:"드럼", nickname:"아싯"}],
+      score:82, leader:"베이스",
+      timeline:[
+        {t:"1:08", text:"넙순(키보드)이 솔로 구간으로 넘어갈 때 프레이즈를 약 반 박 앞당겨 시작했어요. 에너지감은 좋았지만 기타·베이스가 준비되기 전에 하모니 밀도가 갑자기 올라갔어요."},
+        {t:"1:12", text:"카이(베이스)가 그루브의 간격을 넓혀 키보드에 공간을 내줬어요. 워킹 라인의 노트를 조금 비우면서 솔로를 받쳐준 선택이 좋았고, 덕분에 충돌이 줄었어요."},
+        {t:"1:18", text:"아싯(드럼)이 하이햇을 열어 에너지를 올리며 솔로 클라이맥스를 밀어줬어요. 다만 스네어 백비트가 동시에 세져서 템포가 체감상 2~3% 빨라진 느낌이 났어요."},
+        {t:"1:24", text:"네 파트가 다시 같은 클릭으로 모였고 팀 싱크가 안정적으로 회복됐어요. 솔로 종료 후 헤드로 돌아갈 때 키보드와 드럼의 다이내믹만 한 단계 낮추면 더 매끄러울 거예요."},
+      ],
+      nextTips:[
+        {who:"키보드 (넙순)", tip:"솔로 진입 전 한 마디를 ‘준비 마디’로 두고, 그 마디의 마지막 박에서만 프레이즈를 시작하도록 연습해보세요."},
+        {who:"베이스 (카이)", tip:"솔로 구간에서는 노트 수를 20% 줄이고, 루트와 5음 중심으로 공간을 만드는 워킹 라인을 준비해보세요."},
+        {who:"드럼 (아싯)", tip:"하이햇을 열 때 스네어 볼륨은 유지하거나 살짝 낮춰, 템포 가속 느낌을 줄여보세요."},
+        {who:"팀 전체", tip:"다음 연습은 So What 솔로 교대만 집중 루프하고, 각자 진입·퇴장 큐를 손짓으로 맞추는 리허설을 해보세요."},
+      ],
+    },
+    {
+      id:"rs3a", attempt:1, date:"2026년 7월 18일", song:"Blue Bossa",
+      team:[{instrument:"보컬", nickname:"넙죽"},{instrument:"기타", nickname:"카이"},{instrument:"베이스", nickname:"넙순"}],
+      score:91, leader:"보컬",
+      timeline:[
+        {t:"0:33", text:"넙죽(보컬)의 프레이즈 끝 호흡에 맞춰 카이(기타)가 컴핑 타이밍을 잘 맞췄어요. 특히 보컬이 늘린 마지막 음에 기타가 코드를 살짝 늦게 풀어주며 여운을 살렸어요."},
+        {t:"0:41", text:"넙순(베이스)이 하모니를 단단히 받쳐주며 루트 움직임을 단순하고 또렷하게 유지했어요. 보컬 멜로디와 충돌하는 텐션을 피해 안정적인 바닥을 만들어준 점이 돋보여요."},
+        {t:"0:55", text:"브릿지에서 세 파트 모두 템포가 약 4% 당겨졌어요. 보컬이 가사를 밀착해 부르면서 앞쪽으로 쏠렸고, 기타·베이스가 그 흐름을 따라가며 전체 펄스가 빨라졌어요."},
+        {t:"1:02", text:"헤드로 돌아오며 세 파트가 다시 한 호흡으로 모였어요. 템포가 안정된 뒤에도 보컬의 다이내믹이 잘 유지되어, 이번 세션 중 가장 균형 잡힌 구간이었어요."},
+      ],
+      nextTips:[
+        {who:"보컬 (넙죽)", tip:"브릿지 가사는 메트로놈보다 한 템포 느리게 낭독 연습한 뒤, 실제 템포로 올려 붙여보세요."},
+        {who:"기타 (카이)", tip:"보컬이 당겨도 첫 마디는 원래 클릭을 유지하고, 두 번째 마디부터만 따라가는 ‘지연 팔로잉’을 연습해보세요."},
+        {who:"베이스 (넙순)", tip:"브릿지에서는 노트 길이를 짧게 끊어 펄스를 명확히 하면, 팀이 템포를 다시 잡기 쉬워져요."},
+        {who:"팀 전체", tip:"다음 세션은 Blue Bossa 브릿지만 3회 반복하며, 시작 전 공통 BPM을 구두로 확인하고 들어가세요."},
+      ],
+    },
+  ],
+  playlist: [
+    {id:"s1", title:"Autumn Leaves", artist:"Jazz Standard", status:"current", lastPracticed:"오늘", durationMin:12, score:87},
+    {id:"s2", title:"So What", artist:"Miles Davis", status:"current", lastPracticed:"어제", durationMin:18, score:82},
+    {id:"s3", title:"Blue Bossa", artist:"Kenny Dorham", status:"past", lastPracticed:"7월 22일", durationMin:15, score:91},
+    {id:"s4", title:"All of Me", artist:"Jazz Standard", status:"past", lastPracticed:"7월 18일", durationMin:10, score:78},
+    {id:"s5", title:"Take Five", artist:"Dave Brubeck", status:"past", lastPracticed:"7월 10일", durationMin:14, score:85},
+  ],
 };
 
 const STYLES = ["Rock","Pop","Jazz","Fusion","Indie"];
@@ -372,11 +1248,24 @@ function makeAiMember(instId, style){
   };
 }
 
+function applyTheme(){
+  const light = !state.darkModeOn;
+  document.body.classList.toggle("theme-light", light);
+  const phone = document.getElementById("phone");
+  if(phone) phone.classList.toggle("theme-light", light);
+}
+
 function render(){
+  applyTheme();
   const screenEl = document.getElementById("screen");
   screenEl.innerHTML = renderScreen();
   document.getElementById("tabbar").innerHTML = renderTabbar();
   attachHandlers();
+  if(state.screen === "live"){
+    initLiveViz();
+  }else{
+    stopLiveViz();
+  }
 }
 
 function setState(patch){
@@ -553,16 +1442,32 @@ function randomCode(){
 }
 
 function mockReport(){
+  const session = (state.reportSessions || []).find(s => s.id === state.selectedReportId)
+    || (state.reportSessions || [])[0];
+  if(session){
+    return {
+      score: session.score,
+      song: session.song,
+      leader: session.leader,
+      timeline: session.timeline,
+      nextTips: session.nextTips,
+      date: session.date,
+      team: session.team,
+      id: session.id,
+    };
+  }
   return {
     score: 87,
     song: "Autumn Leaves (Demo)",
     leader: "드럼",
-    timeline: [
-      {t:"0:42", text:"기타가 박자보다 살짝 늦게 들어왔어요."},
-      {t:"0:45", text:"베이스가 기타 타이밍을 따라갔어요."},
-      {t:"0:48", text:"드럼이 원래 펄스를 유지했어요."},
-      {t:"0:51", text:"앙상블이 다시 안정을 찾았어요."},
-    ]
+    date: "2026년 7월 28일",
+    team: [
+      {instrument:"기타", nickname:"넙죽"},
+      {instrument:"베이스", nickname:"카이"},
+      {instrument:"드럼", nickname:"넙순"},
+    ],
+    timeline: (state.reportSessions[0] && state.reportSessions[0].timeline) || [],
+    nextTips: (state.reportSessions[0] && state.reportSessions[0].nextTips) || [],
   };
 }
 
@@ -570,9 +1475,10 @@ function mockReport(){
 function renderScreen(){
   switch(state.screen){
     case "home": return screenHome();
-    case "practiceMode": return screenPracticeMode();
+    case "practiceMode":
     case "personalChoice": return screenPersonalChoice();
     case "ensembleMode": return screenEnsembleMode();
+    case "songSelect": return screenSongSelect();
     case "instrumentSelect": return screenInstrumentSelect();
     case "roomChoice": return screenRoomChoice();
     case "roomCreate": return screenRoomCreate();
@@ -584,25 +1490,21 @@ function renderScreen(){
     case "report": return screenReport();
     case "aiFillPicker": return screenAiFillPicker();
     case "profile": return screenProfile();
+    case "playlist": return screenPlaylist();
     default: return screenHome();
   }
 }
 
-function backendBadge(){
-  if(state.backendStatus === "online"){
-    return `<div class="badge online"><span class="badge-dot"></span>Backend Connected</div>`;
-  }
-  if(state.backendStatus === "mock"){
-    return `<div class="badge mock"><span class="badge-dot"></span>Demo Mode (Mock)</div>`;
-  }
-  return `<div class="badge mock"><span class="badge-dot"></span>Checking backend…</div>`;
+function soriLogoMark(){
+  const src = state.darkModeOn ? "/web/sori-wordmark.png" : "/web/sori-wordmark-light.png";
+  return `<img class="brand-wordmark" src="${src}" alt="SORI.WITH" />`;
 }
 
 function screenHome(){
   return `
-    ${backendBadge()}
-    <h1 class="page-title">SORI</h1>
-    <p class="page-sub">AI 앙상블 인텔리전스</p>
+    <div class="brand-row">
+      ${soriLogoMark()}
+    </div>
 
     <div class="card">
       <div class="ring-wrap">
@@ -653,6 +1555,197 @@ function screenHome(){
   `;
 }
 
+function songRowHtml(song){
+  const initial = (song.title || "?").trim().charAt(0).toUpperCase();
+  const coverClass = song.status === "current" ? "current" : "";
+  const yt = song.source === "youtube"
+    ? `<span class="yt-badge"><svg width="8" height="8" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>YT</span>`
+    : "";
+  const subParts = [song.artist, song.lastPracticed];
+  if(song.status === "current" && song.durationMin) subParts.push(`${song.durationMin}분`);
+  if(song.channel) subParts.unshift(song.channel);
+  return `
+    <div class="song-row" data-action="open-playlist-song" data-song="${song.id}">
+      <div class="song-cover ${coverClass}">${initial}</div>
+      <div class="song-meta">
+        <div class="song-title">${escapeHtml(song.title)}${yt}</div>
+        <div class="song-sub">${escapeHtml(subParts.filter(Boolean).join(" · "))}</div>
+      </div>
+      ${song.score != null ? `<div class="song-score">${song.score}</div>` : ""}
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+function ytPlayIcon(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+}
+
+const YT_CATALOG = [
+  {id:"yt1", title:"Autumn Leaves - Jazz Guitar Backing Track", channel:"Jazz Backing Tracks", artist:"Jazz Standard", duration:"12:48", views:"1.2M", barHeights:[10,18,14,22,12]},
+  {id:"yt2", title:"So What - Miles Davis | Full Ensemble Practice", channel:"Jazz Practice Lab", artist:"Miles Davis", duration:"9:21", views:"842K", barHeights:[16,12,20,14,18]},
+  {id:"yt3", title:"Blue Bossa Play-Along (Medium Tempo)", channel:"Bossa Nova Session", artist:"Kenny Dorham", duration:"7:05", views:"510K", barHeights:[12,20,10,16,22]},
+  {id:"yt4", title:"All of Me - Slow Jazz Standard Backing", channel:"Standard Tracks", artist:"Jazz Standard", duration:"6:40", views:"390K", barHeights:[18,10,16,22,12]},
+  {id:"yt5", title:"Take Five - Dave Brubeck Drum & Ensemble Guide", channel:"Rhythm Room", artist:"Dave Brubeck", duration:"5:24", views:"2.1M", barHeights:[14,22,12,18,10]},
+  {id:"yt6", title:"Fly Me To The Moon - Karaoke / Instrumental", channel:"Moonlight Charts", artist:"Bart Howard", duration:"4:12", views:"3.4M", barHeights:[20,14,18,12,16]},
+  {id:"yt7", title:"Giant Steps Practice Loop (120 BPM)", channel:"Coltrane Practice", artist:"John Coltrane", duration:"8:33", views:"276K", barHeights:[11,17,21,13,19]},
+  {id:"yt8", title:"Misty - Ballad Ensemble Backing Track", channel:"Evening Standards", artist:"Erroll Garner", duration:"5:58", views:"188K", barHeights:[15,11,19,14,20]},
+];
+
+function parseYoutubeId(url){
+  if(!url) return null;
+  const m = String(url).trim().match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/
+  );
+  return m ? m[1] : null;
+}
+
+function addYoutubeSongToPlaylist(video){
+  if(!video) return;
+  const mins = (()=>{
+    if(!video.duration || video.duration === "—") return 0;
+    const parts = String(video.duration).split(":").map(Number);
+    if(parts.length === 2) return Math.max(1, Math.round(parts[0] + parts[1]/60));
+    if(parts.length === 3) return Math.max(1, Math.round(parts[0]*60 + parts[1] + parts[2]/60));
+    return 0;
+  })();
+  const song = {
+    id: "s" + Date.now().toString(36),
+    title: video.title.replace(/\s*[|\-].*$/, "").trim() || video.title,
+    artist: video.artist || video.channel || "YouTube",
+    channel: video.channel,
+    status: "current",
+    lastPracticed: "방금 연동",
+    durationMin: mins,
+    score: null,
+    source: "youtube",
+    youtubeId: video.youtubeId || video.id,
+    youtubeUrl: video.youtubeUrl || null,
+  };
+  setState({
+    playlist: [song, ...state.playlist],
+    playlistAdding: false,
+    ytQuery: "",
+    ytUrl: "",
+    ytSearching: false,
+    ytResults: [],
+  });
+}
+
+function searchYoutubeCatalog(query){
+  const q = (query || "").trim().toLowerCase();
+  if(!q) return YT_CATALOG.slice(0, 4);
+  const scored = YT_CATALOG.map(v => {
+    const hay = `${v.title} ${v.channel} ${v.artist}`.toLowerCase();
+    let score = 0;
+    q.split(/\s+/).forEach(w => { if(w && hay.includes(w)) score += 1; });
+    if(hay.includes(q)) score += 2;
+    return {...v, _score: score};
+  }).filter(v => v._score > 0);
+  scored.sort((a,b) => b._score - a._score);
+  return scored.length ? scored.slice(0, 6) : YT_CATALOG.slice(0, 3);
+}
+
+function ytResultHtml(v){
+  const bars = (v.barHeights || [12,18,14,20,10]).map((h,i) =>
+    `<span style="height:${h}px; animation-delay:${i*0.05}s"></span>`
+  ).join("");
+  return `
+    <button class="yt-result" data-action="import-yt-video" data-yt="${v.id}">
+      <div class="yt-thumb">
+        <div class="yt-thumb-bars">${bars}</div>
+        <div class="yt-play">${ytPlayIcon()}</div>
+        <div class="yt-duration">${escapeHtml(v.duration)}</div>
+      </div>
+      <div class="yt-result-meta">
+        <div class="yt-result-title">${escapeHtml(v.title)}</div>
+        <div class="yt-result-ch">${escapeHtml(v.channel)}</div>
+        <div class="yt-result-stat">조회수 ${escapeHtml(v.views)} · YouTube</div>
+      </div>
+    </button>
+  `;
+}
+
+function ytAddPanelHtml(){
+  const results = state.ytResults || [];
+  return `
+    <div class="card add-song-panel">
+      <div class="yt-header">
+        <div class="yt-mark">${ytPlayIcon()}</div>
+        <div>
+          <div class="yt-header-text">YouTube에서 가져오기</div>
+          <div class="yt-header-sub">검색하거나 영상 링크를 붙여넣으세요</div>
+        </div>
+      </div>
+
+      <div class="yt-search-row">
+        <input class="song-input" id="ytQueryInput" type="search"
+          placeholder="곡 · 아티스트 · 백킹 트랙 검색"
+          value="${escapeHtml(state.ytQuery)}" maxlength="120" />
+        <button class="btn btn-dark btn-sm" style="padding:12px 14px; border-radius:14px;" data-action="search-youtube">검색</button>
+      </div>
+
+      <div class="yt-divider">또는 URL로 추가</div>
+      <div class="yt-search-row">
+        <input class="song-input" id="ytUrlInput" type="url"
+          placeholder="https://youtube.com/watch?v=…"
+          value="${escapeHtml(state.ytUrl)}" maxlength="200" />
+        <button class="btn btn-primary btn-sm" style="padding:12px 14px; border-radius:14px;" data-action="import-yt-url">연동</button>
+      </div>
+      <div class="yt-import-hint">데모에서는 YouTube 스타일 검색 결과를 보여주며, 선택한 영상을 플레이리스트에 연동합니다.</div>
+
+      <div class="yt-divider">검색 결과</div>
+      ${state.ytSearching
+        ? `<div class="yt-loading"><div class="spinner" style="margin:8px auto 12px;"></div>YouTube에서 불러오는 중…</div>`
+        : (results.length
+            ? results.map(ytResultHtml).join("")
+            : `<div class="yt-empty">검색어를 입력하거나 URL을 붙여넣어 주세요.</div>`)}
+
+      <button class="btn btn-outline" style="margin-top:12px;" data-action="cancel-add-song">닫기</button>
+    </div>
+  `;
+}
+
+function screenPlaylist(){
+  const current = state.playlist.filter(s => s.status === "current");
+  const past = state.playlist.filter(s => s.status === "past");
+
+  return `
+    <h1 class="page-title">Playlist</h1>
+    <p class="page-sub">연습 중인 곡과 지난 연습 기록</p>
+
+    <button class="btn btn-primary" style="margin-bottom:8px; gap:10px;" data-action="open-add-song">
+      <span style="display:inline-flex; width:22px; height:16px; border-radius:5px; background:#fff; align-items:center; justify-content:center;">
+        <svg width="9" height="9" viewBox="0 0 24 24"><path fill="#FF0000" d="M8 5v14l11-7z"/></svg>
+      </span>
+      YouTube에서 곡 추가
+    </button>
+
+    ${state.playlistAdding ? ytAddPanelHtml() : ""}
+
+    <div class="playlist-section">요즘 연습 중 · ${current.length}</div>
+    <div class="card" style="padding:8px 16px;">
+      ${current.length
+        ? current.map(songRowHtml).join("")
+        : `<div style="padding:18px 4px; color:var(--muted); font-size:13px; text-align:center;">아직 연습 중인 곡이 없어요.</div>`}
+    </div>
+
+    <div class="playlist-section">과거 연습 · ${past.length}</div>
+    <div class="card" style="padding:8px 16px;">
+      ${past.length
+        ? past.map(songRowHtml).join("")
+        : `<div style="padding:18px 4px; color:var(--muted); font-size:13px; text-align:center;">지난 연습 기록이 없어요.</div>`}
+    </div>
+  `;
+}
+
 function screenPlaceholder(emoji, title, sub){
   return `
     <h1 class="page-title">${title}</h1>
@@ -672,9 +1765,60 @@ function flowLabel(){
   return "연습";
 }
 
+function getSelectedSong(){
+  if(!state.selectedSongId) return null;
+  return (state.playlist || []).find(s => s.id === state.selectedSongId) || null;
+}
+
+function selectedSongLabel(){
+  const song = getSelectedSong();
+  return song ? `${song.title}` : "곡 미선택";
+}
+
+function screenSongSelect(){
+  const songs = state.playlist || [];
+  const current = songs.filter(s => s.status === "current");
+  const past = songs.filter(s => s.status === "past");
+  const backAction = state.practiceMode === "personal" ? "go-personalChoice" : "go-ensembleMode";
+  const canContinue = !!state.selectedSongId;
+
+  const row = (song) => `
+    <button class="song-row song-pick ${state.selectedSongId===song.id?'selected':''}"
+      type="button" data-action="pick-song" data-song="${song.id}" style="width:100%; border:none; background:transparent; color:inherit; text-align:left;">
+      <div class="song-cover ${song.status==='current'?'current':''}">${(song.title||'?').charAt(0)}</div>
+      <div class="song-meta">
+        <div class="song-title">${escapeHtml(song.title)}</div>
+        <div class="song-sub">${escapeHtml(song.artist || "")}${song.source==='youtube'?' · YouTube':''}</div>
+      </div>
+      <div class="song-score">${state.selectedSongId===song.id ? "✓" : ""}</div>
+    </button>
+  `;
+
+  return `
+    <button class="backbtn" data-action="${backAction}">← 뒤로</button>
+    <h1 class="page-title">연습할 곡</h1>
+    <p class="page-sub">${flowLabel()} · 플레이리스트에서 곡을 고르세요</p>
+
+    <div class="playlist-section">요즘 연습 중</div>
+    <div class="card" style="padding:8px 16px;">
+      ${current.length ? current.map(row).join("") : `<div style="padding:14px 4px; color:var(--muted); font-size:13px; text-align:center;">연습 중인 곡이 없어요.</div>`}
+    </div>
+
+    <div class="playlist-section">과거 연습</div>
+    <div class="card" style="padding:8px 16px;">
+      ${past.length ? past.map(row).join("") : `<div style="padding:14px 4px; color:var(--muted); font-size:13px; text-align:center;">지난 곡이 없어요.</div>`}
+    </div>
+
+    <button class="btn ${canContinue ? 'btn-primary' : 'btn-disabled'}" style="margin-top:4px;"
+      data-action="confirm-song" ${canContinue ? '' : 'disabled'}>
+      이 곡으로 연습하기
+    </button>
+  `;
+}
+
 function screenPersonalChoice(){
   return `
-    <button class="backbtn" data-action="go-practiceMode">← 뒤로</button>
+    <button class="backbtn" data-action="go-home">← 홈</button>
     <h1 class="page-title">개인 연습</h1>
     <p class="page-sub">어떻게 연습할까요?</p>
 
@@ -735,7 +1879,7 @@ function screenAiBandSetup(){
   return `
     <button class="backbtn" data-action="go-instrumentSelect">← 뒤로</button>
     <h1 class="page-title">개인 합주 연습</h1>
-    <p class="page-sub">내 악기: ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)} · 빈 파트를 AI가 채워요</p>
+    <p class="page-sub">${escapeHtml(selectedSongLabel())} · ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
 
     <div class="ai-section-label">Missing Members</div>
     <div class="ai-mini-grid" style="margin-bottom:4px;">
@@ -773,7 +1917,7 @@ function screenAiBandSetup(){
             <div style="font-weight:700; font-size:13px;">${instName(id)} AI</div>
             <div style="font-size:11px; color:var(--muted);">Listening · Following · Adaptive</div>
           </div>
-          <div style="font-size:8px; font-weight:800; background:var(--ai); color:white; padding:3px 6px; border-radius:6px;">AI</div>
+          <div class="ai-tag">AI</div>
         </div>
       `).join("")}
     </div>
@@ -790,18 +1934,40 @@ function toggleSwitch(on, action){
   return `<button class="toggle-switch ${on?'on':''}" data-action="${action}"><span class="toggle-knob"></span></button>`;
 }
 
+function settingsIcon(kind){
+  const icons = {
+    profile: `<circle cx="8" cy="6.5" r="2.6"/><path d="M3.2 14.2c.6-2.4 2.3-3.6 4.8-3.6s4.2 1.2 4.8 3.6"/>`,
+    billing: `<circle cx="8" cy="8" r="5.2"/><path d="M8 5.2v5.6M6.4 6.6c.4-.7 1-.9 1.6-.9 1.1 0 1.8.5 1.8 1.3s-.7 1.3-1.9 1.6c-1.1.3-1.9.7-1.9 1.7 0 .9.8 1.4 1.9 1.4.7 0 1.3-.3 1.7-.9"/>`,
+    usage: `<path d="M3 12.5l3.2-3.4 2.3 2.1L13 5.5"/><path d="M10.2 5.5H13v2.8"/>`,
+    bell: `<path d="M8 3.4c-2 0-3.5 1.5-3.5 3.4v2.1c0 .7-.3 1.4-.8 1.9L3 11.6h10l-.7-.8c-.5-.5-.8-1.2-.8-1.9V6.8c0-1.9-1.5-3.4-3.5-3.4z"/><path d="M6.7 12.8a1.4 1.4 0 002.6 0"/>`,
+    restore: `<path d="M4.2 8a3.8 3.8 0 116.2 2.9"/><path d="M4 5.2v3.2h3.2"/>`,
+  };
+  return `<span class="settings-row-icon" aria-hidden="true"><svg viewBox="0 0 16 16">${icons[kind] || ""}</svg></span>`;
+}
+
+function settingsLinkRow({icon, label, meta = "", action = ""}){
+  return `
+    <button class="settings-row" ${action ? `data-action="${action}"` : "type=\"button\""} type="button">
+      ${settingsIcon(icon)}
+      <span class="settings-row-label">${escapeHtml(label)}</span>
+      ${meta ? `<span class="settings-row-meta">${escapeHtml(meta)}</span>` : ""}
+      <span class="settings-row-chevron">›</span>
+    </button>
+  `;
+}
+
 function screenProfile(){
   const favInst = state.myInstrument || "guitar";
   return `
     <h1 class="page-title">Profile</h1>
     <p class="page-sub">내 정보와 활동을 확인해요</p>
 
-    <div class="card" style="text-align:center; padding:28px 20px;">
-      <div style="width:64px;height:64px;border-radius:50%;background:var(--accent);color:white;
-        display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;
-        margin:0 auto 12px auto;">쏘</div>
-      <div style="font-weight:800; font-size:17px;">Sori Kim</div>
-      <div style="color:var(--muted); font-size:13px; margin-top:2px;">sori.kim@example.com</div>
+    <div class="card profile-hero">
+      <div class="profile-avatar">쏘</div>
+      <div class="profile-hero-text">
+        <div class="profile-hero-name">Sori Kim</div>
+        <div class="profile-hero-email">sori.kim@example.com</div>
+      </div>
     </div>
 
     <div class="card">
@@ -838,6 +2004,27 @@ function screenProfile(){
       </div>
     </div>
 
+    <div class="settings-section">Account</div>
+    <div class="card settings-card">
+      ${settingsLinkRow({icon:"profile", label:"Profile"})}
+      ${settingsLinkRow({icon:"billing", label:"Billing", meta:"Pro plan"})}
+      ${settingsLinkRow({icon:"usage", label:"Usage"})}
+      ${settingsLinkRow({icon:"bell", label:"Notifications"})}
+    </div>
+
+    <div class="settings-section">Billing</div>
+    <div class="card settings-card" style="padding:0 !important;">
+      <div class="settings-plain">
+        <span class="settings-plain-label">Account plan</span>
+        <span class="settings-plain-value">Pro</span>
+      </div>
+    </div>
+    <div class="card settings-card">
+      ${settingsLinkRow({icon:"billing", label:"Manage subscription"})}
+      ${settingsLinkRow({icon:"restore", label:"Restore purchases"})}
+    </div>
+
+    <div class="settings-section">Preferences</div>
     <div class="card">
       <div class="fill-row">
         <div class="fill-row-left"><span style="font-size:18px;">🔗</span><span style="font-weight:700; font-size:13px;">Connected Devices</span></div>
@@ -862,10 +2049,12 @@ function screenProfile(){
 function screenAiFillPicker(){
   const taken = state.members.map(m => m.instrument);
   const available = INSTRUMENTS.filter(i => !taken.includes(i.id));
+  const selected = state.aiFillSelected || [];
+  const canAdd = selected.length > 0;
   return `
     <button class="backbtn" data-action="go-waitingRoom">← 대기실로</button>
     <h1 class="page-title">AI로 빈자리 채우기</h1>
-    <p class="page-sub">아직 아무도 없는 파트를 AI 세션리스트가 채워요</p>
+    <p class="page-sub">여러 파트를 선택해 한 번에 AI로 채울 수 있어요</p>
 
     ${available.length === 0 ? `
       <div class="placeholder-box">
@@ -874,8 +2063,10 @@ function screenAiFillPicker(){
       </div>
     ` : `
     <div class="card">
-      ${available.map(i => `
-        <div class="fill-row">
+      ${available.map(i => {
+        const on = selected.includes(i.id);
+        return `
+        <div class="fill-row ${on ? 'selected-fill' : ''}" data-action="toggle-ai-fill" data-inst="${i.id}" style="cursor:pointer;">
           <div class="fill-row-left">
             <div class="member-dot" style="background:${i.color}">${i.emoji}</div>
             <div>
@@ -883,57 +2074,23 @@ function screenAiFillPicker(){
               <div class="member-role">AI가 이 파트를 연주해요</div>
             </div>
           </div>
-          <button class="btn btn-dark btn-sm" data-action="add-ai-fill" data-inst="${i.id}">추가</button>
+          <div class="fill-check">${on ? "✓" : ""}</div>
         </div>
-      `).join("")}
+      `;}).join("")}
     </div>
+    <button class="btn ${canAdd ? 'btn-primary' : 'btn-disabled'}" data-action="confirm-ai-fill" ${canAdd ? '' : 'disabled'}>
+      선택한 ${selected.length}개 파트 AI로 채우기
+    </button>
     `}
   `;
 }
 
-function screenPracticeMode(){
-  return `
-    <button class="backbtn" data-action="go-home">← 홈</button>
-    <h1 class="page-title">연습 시작</h1>
-    <p class="page-sub">어떤 방식으로 연습할까요?</p>
-
-    <div class="card tappable" data-action="pick-mode" data-mode="personal">
-      <div class="mode-card">
-        <div class="mode-num">①</div>
-        <div>
-          <div class="mode-title">개인</div>
-          <div class="mode-desc">혼자 연습하거나, AI 밴드와 함께 합주하듯 연습해요.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card tappable" data-action="pick-mode" data-mode="offline">
-      <div class="mode-card">
-        <div class="mode-num">②</div>
-        <div>
-          <div class="mode-title">오프라인 합주 연습</div>
-          <div class="mode-desc">같은 공간에서 함께 연습해요. 방을 만들거나 참가하고, 빈 파트는 AI로 채울 수 있어요.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card tappable" data-action="pick-mode" data-mode="online">
-      <div class="mode-card">
-        <div class="mode-num">③</div>
-        <div>
-          <div class="mode-title">온라인 합주 연습</div>
-          <div class="mode-desc">원격으로 함께 연습해요. AI가 실시간으로 앙상블을 분석하고, 빈 파트도 채워줘요.</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
 function screenInstrumentSelect(){
+  const backAction = "go-songSelect";
   return `
-    <button class="backbtn" data-action="go-practiceMode">← 뒤로</button>
+    <button class="backbtn" data-action="${backAction}">← 뒤로</button>
     <h1 class="page-title">악기 선택</h1>
-    <p class="page-sub">${flowLabel()}에서 연주할 악기를 선택하세요</p>
+    <p class="page-sub">${flowLabel()} · ${escapeHtml(selectedSongLabel())}</p>
     <div class="inst-grid">
       ${INSTRUMENTS.map(i => `
         <button class="inst-btn ${state.myInstrument===i.id?'selected':''}"
@@ -955,7 +2112,7 @@ function screenRoomChoice(){
   return `
     <button class="backbtn" data-action="go-instrumentSelect">← 뒤로</button>
     <h1 class="page-title">${flowLabel()}</h1>
-    <p class="page-sub">내 악기: ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
+    <p class="page-sub">${escapeHtml(selectedSongLabel())} · ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
 
     <div class="card tappable" data-action="go-roomCreate">
       <div class="row">
@@ -1050,7 +2207,7 @@ function renderWaitingRoomBody(fromCreate){
         <div class="member-row">
           <div class="member-dot" style="background:${m.isAi ? 'var(--ai)' : instColor(m.instrument)}">${instEmoji(m.instrument)}</div>
           <div class="member-info">
-            <div class="member-name">${m.name} ${m.isAi ? `<span style="font-size:8px; font-weight:800; background:var(--accent); color:white; padding:2px 5px; border-radius:5px; margin-left:4px;">AI</span>` : ""}</div>
+            <div class="member-name">${m.name} ${m.isAi ? `<span class="member-ai-badge">AI</span>` : ""}</div>
             <div class="member-role">${instName(m.instrument)}${m.isAi ? " · " + STYLE_LABEL[m.style] : ""}</div>
           </div>
           <div class="status-pill">참가함</div>
@@ -1090,7 +2247,7 @@ function screenPersonalPractice(){
   return `
     <button class="backbtn" data-action="go-instrumentSelect">← 뒤로</button>
     <h1 class="page-title">개인 연습</h1>
-    <p class="page-sub">내 악기: ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
+    <p class="page-sub">${escapeHtml(selectedSongLabel())} · ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
 
     <div class="card" style="text-align:center; padding:40px 20px;">
       <div style="font-size:44px; margin-bottom:10px;">${instEmoji(state.myInstrument)}</div>
@@ -1103,64 +2260,50 @@ function screenPersonalPractice(){
 
 function screenLive(){
   const members = liveMembers();
-  const cx = 165, cy = 150, r = 105;
-  const positions = members.map((m,i)=>{
-    const angle = (Math.PI * 2 * i / members.length) - Math.PI/2;
-    return {...m, x: cx + r*Math.cos(angle), y: cy + r*Math.sin(angle)};
-  });
-  const flowIdx = state.liveTick % positions.length;
-  const nextIdx = (flowIdx+1) % positions.length;
+  const myInst = state.myInstrument || (members.find(m => !m.isAi) || members[0] || {}).instrument || "guitar";
+  const myColor = instHex(myInst);
 
   return `
     <h1 class="page-title">라이브 앙상블</h1>
     <p class="page-sub">AI가 실시간으로 상호작용을 분석하고 있어요</p>
 
-    <div class="card">
-      <div class="live-circle-wrap">
-        <svg width="330" height="300" viewBox="0 0 330 300" style="position:absolute; top:0; left:0;">
-          ${positions.map((p,i)=>{
-            const n = positions[(i+1)%positions.length];
-            const active = i === flowIdx;
-            return `<line x1="${p.x}" y1="${p.y}" x2="${n.x}" y2="${n.y}"
-              stroke="${active? 'var(--accent)' : 'rgba(255,255,255,0.12)'}" stroke-width="${active?3:1.5}"
-              stroke-dasharray="${active?'0':'4 4'}" />`;
-          }).join("")}
-        </svg>
-        ${positions.map(p => `
-          <div class="live-member" style="left:${p.x}px; top:${p.y}px;">
-            <div class="live-avatar ${p.isAi ? 'ai-glow' : 'pulse'}" style="background:${p.isAi ? 'var(--ai)' : instColor(p.instrument)}; color:${p.isAi ? 'var(--ai)' : instColor(p.instrument)};">
-              <span style="color:white;">${instEmoji(p.instrument)}</span>
-              ${p.isAi ? '<div class="ai-badge">AI</div>' : ''}
-            </div>
-            <div class="live-name">${p.name}</div>
-            <div class="live-bpm">${120 + (p.isAi?0:((state.liveTick*3+p.instrument.length*5)%6-3))} BPM</div>
+    <div class="card" style="padding:14px;">
+      <div class="live-viz-wrap" id="liveVizWrap">
+        <canvas id="liveViz" width="660" height="520"></canvas>
+        <div class="tempo-alert" id="tempoAlert" style="--alert-color:${myColor};" aria-live="polite">
+          <div class="tempo-alert-dot"></div>
+          <div class="tempo-alert-body">
+            <div class="tempo-alert-title" id="tempoAlertTitle">템포 알람</div>
+            <div class="tempo-alert-msg" id="tempoAlertMsg">연주 템포를 맞춰보세요</div>
           </div>
-        `).join("")}
+        </div>
       </div>
-      <div style="text-align:center; font-size:12px; color:var(--muted); margin-top:6px;">
-        ${instName(positions[flowIdx].instrument)} → ${instName(positions[nextIdx].instrument)} 영향 전파 중
+      <div class="live-viz-legend">
+        ${members.map(m => `
+          <span><i style="background:${instHex(m.instrument)}"></i>${escapeHtml(m.name || instName(m.instrument))}${m.isAi ? " AI" : ""}</span>
+        `).join("")}
       </div>
     </div>
 
-    ${positions.some(p=>p.isAi) ? `
+    ${members.some(p=>p.isAi) ? `
     <div class="card">
       <div style="font-weight:800; font-size:14px; margin-bottom:2px;">AI Sessionist 상태</div>
-      ${positions.filter(p=>p.isAi).map(p => `
+      ${members.filter(p=>p.isAi).map(p => `
         <div class="ai-status-card">
-          <div class="ai-status-avatar">
+          <div class="ai-status-avatar" style="--glow-color:${instHex(p.instrument)};">
             <div class="ai-glow-ring"></div>
             ${instEmoji(p.instrument)}
           </div>
           <div>
-            <div class="ai-status-name">${p.name} · ${STYLE_LABEL[p.style]}</div>
+            <div class="ai-status-name">${p.name} · ${STYLE_LABEL[p.style] || "재즈"}</div>
             <div class="ai-status-tags">
               <span class="ai-status-tag">Listening</span>
               <span class="ai-status-tag">Following</span>
               <span class="ai-status-tag">Adaptive</span>
             </div>
             <div class="ai-status-meta">
-              <span>응답속도 ${p.responseSpeed}ms</span>
-              <span>확신도 ${p.confidence}%</span>
+              <span>응답속도 ${p.responseSpeed || 120}ms</span>
+              <span>확신도 ${p.confidence || 88}%</span>
             </div>
           </div>
         </div>
@@ -1172,39 +2315,501 @@ function screenLive(){
   `;
 }
 
+function instHex(id){
+  const i = INSTRUMENTS.find(x => x.id === id);
+  return i ? i.hex : "#E02020";
+}
+
+function instIdByLabel(label){
+  const s = String(label || "").trim();
+  if(!s) return null;
+  const byId = INSTRUMENTS.find(x => x.id === s);
+  if(byId) return byId.id;
+  const byName = INSTRUMENTS.find(x => x.name === s);
+  return byName ? byName.id : null;
+}
+
+function instHexByLabel(label){
+  const id = instIdByLabel(label);
+  return id ? instHex(id) : "#9A9690";
+}
+
+function hexToRgba(hex, alpha){
+  const h = String(hex || "").replace("#", "");
+  if(h.length !== 6) return `rgba(154,150,144,${alpha})`;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function tipWhoColor(who){
+  const w = String(who || "");
+  if(!w || /팀\s*전체/.test(w)) return "var(--accent)";
+  for(const inst of INSTRUMENTS){
+    if(w.includes(inst.name)) return inst.hex;
+  }
+  return "var(--accent)";
+}
+
+function colorizeTeamMentions(text, team){
+  let html = escapeHtml(text || "");
+  const patterns = [];
+  (team || []).forEach(m => {
+    const hex = instHexByLabel(m.instrument);
+    if(m.isAi){
+      patterns.push({ key: `AI ${m.instrument}`, hex });
+      patterns.push({ key: `AI${m.instrument}`, hex });
+    }
+    if(m.nickname && m.nickname !== "AI"){
+      patterns.push({ key: `${m.nickname}(${m.instrument})`, hex });
+      patterns.push({ key: `${m.nickname} (${m.instrument})`, hex });
+    }
+    if(m.absentNickname){
+      patterns.push({ key: `${m.absentNickname}(${m.instrument})`, hex });
+      patterns.push({ key: `${m.absentNickname} (${m.instrument})`, hex });
+    }
+  });
+  INSTRUMENTS.forEach(inst => {
+    patterns.push({ key: `${inst.name} AI`, hex: inst.hex });
+  });
+  patterns.sort((a, b) => b.key.length - a.key.length);
+  const seen = new Set();
+  patterns.forEach(({key, hex}) => {
+    if(seen.has(key)) return;
+    seen.add(key);
+    const safe = escapeHtml(key).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(safe, "g");
+    html = html.replace(re, `<span class="timeline-mention" style="color:${hex}">${escapeHtml(key)}</span>`);
+  });
+  return html;
+}
+
 function liveMembers(){
   if(state.members.length) return state.members;
   return [{instrument: state.myInstrument || "guitar", name:"나", isAi:false}];
 }
 
+// ---------- Live piano-roll visualization ----------
+let liveVizRaf = null;
+let liveVizNotes = [];
+let liveVizHits = [];
+let liveVizStart = 0;
+let liveVizLastAlert = 0;
+let liveVizAlertUntil = 0;
+
+function stopLiveViz(){
+  if(liveVizRaf){ cancelAnimationFrame(liveVizRaf); liveVizRaf = null; }
+  liveVizNotes = [];
+  liveVizHits = [];
+}
+
+function seedLiveNotes(members){
+  const notes = [];
+  const lanes = Math.max(members.length, 1);
+  for(let lane = 0; lane < lanes; lane++){
+    const m = members[lane];
+    const color = instHex(m.instrument);
+    let t = -1.2 - lane * 0.35;
+    for(let i = 0; i < 28; i++){
+      const dur = 0.35 + ((lane * 5 + i * 3) % 7) * 0.12;
+      const gap = 0.2 + ((i * 4 + lane) % 5) * 0.15;
+      notes.push({
+        lane,
+        color,
+        start: t,
+        end: t + dur,
+        hit: false,
+      });
+      t += dur + gap;
+    }
+  }
+  return notes;
+}
+
+function initLiveViz(){
+  const canvas = document.getElementById("liveViz");
+  if(!canvas) return;
+  stopLiveViz();
+  const members = liveMembers();
+  liveVizNotes = seedLiveNotes(members);
+  liveVizHits = [];
+  liveVizStart = performance.now();
+  liveVizLastAlert = liveVizStart - 4500; // first alert ~3s in
+  liveVizAlertUntil = 0;
+
+  const alertEl = document.getElementById("tempoAlert");
+  if(alertEl) alertEl.classList.remove("show");
+
+  const loop = (now) => {
+    const elapsed = (now - liveVizStart) / 1000;
+    drawLiveViz(canvas, members, elapsed, now);
+    updateTempoAlert(now, members);
+    liveVizRaf = requestAnimationFrame(loop);
+  };
+  liveVizRaf = requestAnimationFrame(loop);
+}
+
+function updateTempoAlert(now, members){
+  const alertEl = document.getElementById("tempoAlert");
+  if(!alertEl) return;
+  const myInst = state.myInstrument || (members.find(m => !m.isAi) || members[0] || {}).instrument || "guitar";
+  const myColor = instHex(myInst);
+  alertEl.style.setProperty("--alert-color", myColor);
+  alertEl.style.borderColor = myColor + "99";
+  alertEl.style.boxShadow = `0 8px 24px rgba(0,0,0,0.45), 0 0 18px ${myColor}55`;
+
+  if(now >= liveVizAlertUntil && now - liveVizLastAlert > 7500){
+    liveVizLastAlert = now;
+    liveVizAlertUntil = now + 2800;
+    const late = Math.random() > 0.45;
+    const drift = 3 + Math.floor(Math.random() * 6);
+    const titleEl = document.getElementById("tempoAlertTitle");
+    const msgEl = document.getElementById("tempoAlertMsg");
+    if(titleEl) titleEl.textContent = late ? "템포가 느려요" : "템포가 빨라요";
+    if(msgEl){
+      msgEl.textContent = late
+        ? `${instName(myInst)} 파트가 ${drift}% 느립니다 · 조금 당겨보세요`
+        : `${instName(myInst)} 파트가 ${drift}% 빠릅니다 · 조금 늦춰보세요`;
+    }
+    alertEl.classList.add("show");
+  }
+  if(now > liveVizAlertUntil){
+    alertEl.classList.remove("show");
+  }
+}
+
+function drawLiveViz(canvas, members, elapsed){
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssW = canvas.clientWidth || 330;
+  const cssH = canvas.clientHeight || 260;
+  const w = Math.round(cssW * dpr);
+  const h = Math.round(cssH * dpr);
+  if(canvas.width !== w || canvas.height !== h){
+    canvas.width = w;
+    canvas.height = h;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // background
+  ctx.fillStyle = "#0A0A0A";
+  ctx.fillRect(0, 0, cssW, cssH);
+
+  // grid
+  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+  ctx.lineWidth = 1;
+  const laneCount = Math.max(members.length, 1);
+  const topPad = 18;
+  const botPad = 18;
+  const laneH = (cssH - topPad - botPad) / laneCount;
+  for(let i = 0; i <= laneCount; i++){
+    const y = topPad + i * laneH;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(cssW, y);
+    ctx.stroke();
+  }
+  for(let x = 0; x < cssW; x += 28){
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, cssH);
+    ctx.stroke();
+  }
+
+  const playheadX = cssW * 0.78;
+  const pxPerSec = cssW * 0.22; // travel speed
+
+  // recycle notes for long sessions
+  const maxEnd = liveVizNotes.reduce((m, n) => Math.max(m, n.end), 0);
+  if(elapsed > maxEnd - 2){
+    const shift = maxEnd + 0.8;
+    liveVizNotes.forEach(n => {
+      n.start += shift;
+      n.end += shift;
+      n.hit = false;
+    });
+  }
+
+  // notes move toward playhead from the left
+  liveVizNotes.forEach(n => {
+    const x0 = playheadX - (n.start - elapsed) * pxPerSec;
+    const x1 = playheadX - (n.end - elapsed) * pxPerSec;
+    // bars extend leftward from future; as time passes they move right
+    // Actually: future notes (start > elapsed) should be left of playhead
+    // x_start = playheadX - (n.start - elapsed) * speed  => if start>elapsed, x < playhead ✓
+    // x_end for longer note is further left: playheadX - (n.end - elapsed)*speed which is MORE left if end>start
+    // So left = x_end (smaller), right = x_start (larger) when notes approach from left... 
+    // Wait if end > start, (end-elapsed) > (start-elapsed), so x_end < x_start. left=x_end, width=x_start-x_end.
+    const left = Math.min(x0, x1);
+    const right = Math.max(x0, x1);
+    if(right < -20 || left > cssW + 20) return;
+
+    const y = topPad + n.lane * laneH + laneH * 0.34;
+    const nh = laneH * 0.28;
+    const radius = Math.min(4, nh / 2);
+    ctx.fillStyle = n.color;
+    ctx.globalAlpha = 0.52;
+    roundRect(ctx, left, y, Math.max(3, right - left), nh, radius);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // hit detection when note crosses playhead
+    if(!n.hit && n.start <= elapsed && n.end >= elapsed - 0.05){
+      n.hit = true;
+      liveVizHits.push({
+        x: playheadX,
+        y: y + nh / 2,
+        color: n.color,
+        t: elapsed,
+      });
+    }
+  });
+
+  // playhead
+  ctx.strokeStyle = "rgba(255,255,255,0.92)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(playheadX, 8);
+  ctx.lineTo(playheadX, cssH - 8);
+  ctx.stroke();
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.arc(playheadX, 8, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ripples
+  liveVizHits = liveVizHits.filter(hit => elapsed - hit.t < 0.85);
+  liveVizHits.forEach(hit => {
+    const age = elapsed - hit.t;
+    for(let i = 0; i < 3; i++){
+      const r = 6 + age * (28 + i * 18);
+      const alpha = Math.max(0, 0.55 - age * 0.7 - i * 0.12);
+      ctx.strokeStyle = hit.color;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 2 - i * 0.4;
+      ctx.beginPath();
+      ctx.arc(hit.x, hit.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+
+  // lane labels
+  ctx.font = "600 10px -apple-system, BlinkMacSystemFont, sans-serif";
+  members.forEach((m, i) => {
+    ctx.fillStyle = "rgba(255,255,255,0.35)";
+    ctx.fillText(instName(m.instrument), 8, topPad + i * laneH + 12);
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+const NICKNAMES = ["넙죽", "카이", "넙순", "아싯"];
+
+function normalizeTeam(team){
+  return (team || []).map((m, i) => {
+    if(typeof m === "string"){
+      return {instrument: m, nickname: NICKNAMES[i % NICKNAMES.length], isAi:false};
+    }
+    return {
+      instrument: m.instrument || "파트",
+      nickname: m.isAi ? "AI" : (m.nickname || NICKNAMES[i % NICKNAMES.length]),
+      isAi: !!m.isAi,
+      absentNickname: m.absentNickname || "",
+    };
+  });
+}
+
+function teamMemberChipLabel(m){
+  if(m.isAi){
+    const absent = m.absentNickname ? `${m.absentNickname} 결석` : "결석 대체";
+    return `${escapeHtml(m.instrument)} (<span class="ai-sub">AI</span> · ${escapeHtml(absent)})`;
+  }
+  return `${escapeHtml(m.instrument)} (${escapeHtml(m.nickname)})`;
+}
+
+function teamMemberChipStyle(m){
+  const hex = instHexByLabel(m.instrument);
+  return `color:${hex}; border-color:${hexToRgba(hex, 0.45)}; background:${hexToRgba(hex, 0.14)};`;
+}
+
+function teamSummaryLabel(team){
+  return normalizeTeam(team).map(m => {
+    if(m.isAi){
+      const absent = m.absentNickname ? `${m.absentNickname} 결석` : "결석 대체";
+      return `${m.instrument} (AI · ${absent})`;
+    }
+    return `${m.instrument} (${m.nickname})`;
+  }).join(" · ");
+}
+
+function sessionsForSong(song){
+  return (state.reportSessions || [])
+    .filter(s => s.song === song)
+    .slice()
+    .sort((a, b) => (a.attempt || 0) - (b.attempt || 0));
+}
+
+function latestSessionsBySong(){
+  const map = new Map();
+  (state.reportSessions || []).forEach(s => {
+    const prev = map.get(s.song);
+    if(!prev || (s.attempt || 0) > (prev.attempt || 0)) map.set(s.song, s);
+  });
+  return [...map.values()];
+}
+
+function scoreProgressSvg(attempts){
+  if(!attempts.length) return "";
+  const w = 300, h = 88, padX = 18, padY = 16;
+  const scores = attempts.map(a => a.score);
+  const minS = Math.min(...scores, 60);
+  const maxS = Math.max(...scores, 100);
+  const span = Math.max(1, maxS - minS);
+  const pts = attempts.map((a, i) => {
+    const x = padX + (attempts.length === 1 ? (w - padX * 2) / 2 : i * (w - padX * 2) / (attempts.length - 1));
+    const y = h - padY - ((a.score - minS) / span) * (h - padY * 2);
+    return {x, y, score: a.score, attempt: a.attempt || (i + 1)};
+  });
+  const poly = pts.map(p => `${p.x},${p.y}`).join(" ");
+  const textFill = state.darkModeOn ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.85)";
+  return `
+    <svg class="score-progress-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <polyline points="${poly}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.map(p => `
+        <circle cx="${p.x}" cy="${p.y}" r="4.5" fill="var(--accent)" />
+        <text x="${p.x}" y="${p.y - 8}" text-anchor="middle" fill="${textFill}" font-size="10" font-weight="700">${p.score}</text>
+      `).join("")}
+    </svg>
+  `;
+}
+
 function screenReport(){
-  const r = state.report || mockReport();
+  const songList = latestSessionsBySong();
+  const songName = state.selectedReportSong || (songList[0] && songList[0].song) || "";
+  const attempts = sessionsForSong(songName);
+  const selectedId = state.selectedReportId
+    || (attempts.length ? attempts[attempts.length - 1].id : null);
+  const r = attempts.find(s => s.id === selectedId)
+    || attempts[attempts.length - 1]
+    || state.report
+    || mockReport();
+  const team = normalizeTeam(r.team);
+  const firstScore = attempts[0] ? attempts[0].score : r.score;
+  const latestScore = attempts.length ? attempts[attempts.length - 1].score : r.score;
+  const delta = latestScore - firstScore;
+  const humanTips = (r.nextTips || []).filter(tip => !/\bAI\b|\(AI\)/i.test(tip.who || ""));
+
   return `
     <button class="backbtn" data-action="go-home">← 홈</button>
     <h1 class="page-title">AI 앙상블 리포트</h1>
-    <p class="page-sub">${r.song}</p>
+    <p class="page-sub">같은 곡의 점수 발전과 회차별 피드백을 확인해요</p>
 
+    <div class="playlist-section">연습한 곡</div>
+    <div class="session-pick">
+      ${songList.map(s => {
+        const n = sessionsForSong(s.song).length;
+        return `
+        <button class="session-card ${s.song === songName ? 'selected' : ''}"
+          data-action="select-report-song" data-song="${escapeHtml(s.song)}">
+          <div class="session-body">
+            <div class="session-date">${n}회 연습</div>
+            <div class="session-song">${escapeHtml(s.song)}</div>
+            <div class="session-team">최근 ${escapeHtml(s.date)} · 최신 ${s.score}점</div>
+          </div>
+          <div class="session-score-mini">${s.score}</div>
+        </button>
+      `;}).join("")}
+    </div>
+
+    ${attempts.length ? `
+    <div class="playlist-section">${escapeHtml(songName)} · 점수 발전</div>
+    <div class="card score-progress">
+      ${scoreProgressSvg(attempts)}
+      <div class="score-progress-meta">
+        <span>1회 ${firstScore}점 → 최근 ${latestScore}점</span>
+        <span style="color:${delta >= 0 ? '#5DDB8A' : 'var(--accent)'}">${delta >= 0 ? "+" : ""}${delta}점</span>
+      </div>
+    </div>
+
+    <div class="playlist-section">회차 선택 · 과거 피드백</div>
+    <div class="attempt-chips">
+      ${attempts.map(a => `
+        <button class="attempt-chip ${a.id === r.id ? 'active' : ''}"
+          data-action="select-report-session" data-session="${a.id}">
+          ${a.attempt || "?"}회차 · ${a.score}점
+        </button>
+      `).join("")}
+    </div>
+    ` : ""}
+
+    <div class="playlist-section">선택한 회차 피드백</div>
     <div class="card report-score">
       <div class="num">${r.score}</div>
-      <div class="lab">Overall Ensemble Score</div>
+      <div class="lab">${r.attempt ? r.attempt + "회차" : "Session"} · Overall Ensemble Score</div>
+      <div class="feedback-meta">
+        <div class="feedback-meta-pair">
+          <div class="feedback-meta-block">
+            <span class="feedback-meta-label">날짜</span>
+            <div class="feedback-meta-value soft">${escapeHtml(r.date || "—")}</div>
+          </div>
+          <div class="feedback-meta-block">
+            <span class="feedback-meta-label">곡</span>
+            <div class="feedback-meta-value">${escapeHtml(r.song || "—")}</div>
+          </div>
+        </div>
+        <div class="feedback-meta-block">
+          <span class="feedback-meta-label">팀원</span>
+          <div class="feedback-team-list">
+            ${team.length
+              ? team.map(m => `
+                  <span class="feedback-team-chip" style="${teamMemberChipStyle(m)}">${teamMemberChipLabel(m)}</span>
+                `).join("")
+              : `<div class="feedback-meta-value soft">—</div>`}
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
       <div style="font-weight:800; font-size:14px; margin-bottom:8px;">리더 / 팔로워</div>
-      <div style="font-size:13px; color:var(--muted);">이번 세션에서는 <b>${r.leader}</b>가 대부분의 구간에서 템포를 이끌었어요.</div>
+      <div style="font-size:14px; color:var(--ink-soft); line-height:1.55;">이번 세션에서는 <b style="color:${instHexByLabel(r.leader)}">${escapeHtml(r.leader || "")}</b>가 대부분의 구간에서 템포를 이끌었어요.</div>
     </div>
 
     <div class="card">
-      <div style="font-weight:800; font-size:14px; margin-bottom:6px;">타임라인</div>
-      ${r.timeline.map(t => `
+      <div style="font-weight:800; font-size:14px; margin-bottom:10px;">피드백 타임라인</div>
+      ${(r.timeline || []).map(t => `
         <div class="timeline-item">
-          <div class="timeline-time">${t.t}</div>
-          <div class="timeline-text">${t.text}</div>
+          <div class="timeline-time">${escapeHtml(t.t)}</div>
+          <div class="timeline-text">${colorizeTeamMentions(t.text, team)}</div>
         </div>
       `).join("")}
     </div>
 
-    <button class="btn btn-dark" data-action="go-home">홈으로</button>
+    <div class="playlist-section">다음 연습 제안</div>
+    <div class="card">
+      <div style="font-size:12px; color:var(--muted); margin-bottom:8px; line-height:1.45;">
+        이 회차 기록을 바탕으로, 다음에 시작할 때 파트별로 이렇게 조정해보세요.
+      </div>
+      ${humanTips.length
+        ? humanTips.map(tip => `
+            <div class="next-tip-row">
+              <div class="next-tip-who" style="color:${tipWhoColor(tip.who)}">${escapeHtml(tip.who)}</div>
+              <div class="next-tip-text">${escapeHtml(tip.tip)}</div>
+            </div>
+          `).join("")
+        : `<div style="font-size:13px; color:var(--muted); padding:8px 0;">아직 제안이 없어요.</div>`}
+    </div>
   `;
 }
 
@@ -1254,11 +2859,23 @@ function simulateMembersJoining(){
 }
 
 // ---------- Tabbar ----------
+function aiBarsLogo(){
+  return `
+    <svg class="ai-bars-logo" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="1.5"  y="5"  width="2.2" height="14" rx="1.1"/>
+      <rect x="6.2"  y="2"  width="2.2" height="15" rx="1.1"/>
+      <rect x="10.9" y="7"  width="2.2" height="13" rx="1.1"/>
+      <rect x="15.6" y="3.5" width="2.2" height="16" rx="1.1"/>
+      <rect x="20.3" y="6"  width="2.2" height="12" rx="1.1"/>
+    </svg>
+  `;
+}
+
 function renderTabbar(){
   const tabs = [
     {id:"home", icon:"🏠", label:"Home"},
-    {id:"practiceMode", icon:"🎵", label:"Practice"},
-    {id:"quickAi", icon:"🤖", label:"AI", center:true, action:"quick-ai-start"},
+    {id:"playlist", icon:"🎶", label:"Playlist"},
+    {id:"quickAi", icon: aiBarsLogo(), label:"AI", center:true, action:"quick-ai-start"},
     {id:"report", icon:"📊", label:"Reports"},
     {id:"profile", icon:"👤", label:"Profile"},
   ];
@@ -1282,10 +2899,33 @@ function attachHandlers(){
       state.joinError = "";
     });
   }
+  const titleInput = document.getElementById("ytQueryInput");
+  if(titleInput){
+    titleInput.addEventListener("input", (e)=>{ state.ytQuery = e.target.value; });
+    titleInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        const btn = document.querySelector('[data-action="search-youtube"]');
+        if(btn) btn.click();
+      }
+    });
+  }
+  const urlInput = document.getElementById("ytUrlInput");
+  if(urlInput){
+    urlInput.addEventListener("input", (e)=>{ state.ytUrl = e.target.value; });
+    urlInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        const btn = document.querySelector('[data-action="import-yt-url"]');
+        if(btn) btn.click();
+      }
+    });
+  }
 }
 
 function stopLiveInterval(){
   if(state.liveInterval){ clearInterval(state.liveInterval); state.liveInterval = null; }
+  stopLiveViz();
 }
 
 async function onAction(e){
@@ -1296,19 +2936,116 @@ async function onAction(e){
     if(target === "home"){
       stopLiveInterval();
       setState({screen:"home", tab:"home", practiceMode:null, subMode:null, myInstrument:null, roomCode:null,
-        roomId:null, isHost:false, members:[], joinInput:"", joinError:"", aiMissing:[], aiStyle:null});
+        roomId:null, isHost:false, members:[], joinInput:"", joinError:"", aiMissing:[], aiStyle:null,
+        selectedSongId:null, playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
+      return;
+    }
+    if(target === "practiceMode" || target === "personalChoice"){
+      setState({practiceMode:"personal", subMode:null, screen:"personalChoice", tab:"home",
+        selectedSongId:null, playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
+      return;
+    }
+    if(target === "songSelect"){
+      setState({screen:"songSelect"});
+      return;
+    }
+    if(target === "aiFillPicker"){
+      setState({screen:"aiFillPicker", aiFillSelected:[]});
+      return;
+    }
+    if(target === "playlist"){
+      setState({screen:"playlist", tab:"playlist", playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
       return;
     }
     setState({screen: target});
     return;
   }
 
+  if(action === "open-add-song"){
+    setState({
+      playlistAdding:true,
+      ytQuery:"",
+      ytUrl:"",
+      ytSearching:false,
+      ytResults: searchYoutubeCatalog(""),
+    });
+    return;
+  }
+
+  if(action === "cancel-add-song"){
+    setState({playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
+    return;
+  }
+
+  if(action === "search-youtube"){
+    const input = document.getElementById("ytQueryInput");
+    const query = ((input && input.value) || state.ytQuery).trim();
+    setState({ytQuery: query, ytSearching: true, ytResults: []});
+    setTimeout(()=>{
+      if(state.screen !== "playlist") return;
+      setState({
+        ytSearching: false,
+        ytResults: searchYoutubeCatalog(query),
+      });
+    }, 650);
+    return;
+  }
+
+  if(action === "import-yt-video"){
+    const id = e.currentTarget.dataset.yt;
+    const video = (state.ytResults || []).find(v => v.id === id) || YT_CATALOG.find(v => v.id === id);
+    if(!video) return;
+    addYoutubeSongToPlaylist(video);
+    return;
+  }
+
+  if(action === "import-yt-url"){
+    const input = document.getElementById("ytUrlInput");
+    const url = ((input && input.value) || state.ytUrl).trim();
+    if(!url) return;
+    const videoId = parseYoutubeId(url);
+    const catalogHit = YT_CATALOG.find(v => {
+      const key = (v.artist + " " + v.title).toLowerCase();
+      return url.toLowerCase().split(/[\s/_-]+/).some(w => w.length > 3 && key.includes(w));
+    });
+    if(catalogHit){
+      addYoutubeSongToPlaylist({...catalogHit, youtubeUrl: url, youtubeId: videoId || catalogHit.id});
+      return;
+    }
+    if(!videoId){
+      setState({ytUrl: url, ytResults: searchYoutubeCatalog(url), ytSearching: false, playlistAdding: true});
+      return;
+    }
+    addYoutubeSongToPlaylist({
+      id: "yt_" + videoId,
+      title: `YouTube 연동 곡`,
+      channel: "YouTube",
+      artist: "Imported",
+      duration: "—",
+      views: "링크 연동",
+      youtubeUrl: url,
+      youtubeId: videoId,
+    });
+    return;
+  }
+
+  if(action === "open-playlist-song"){
+    setState({
+      practiceMode:"personal",
+      subMode:null,
+      selectedSongId: e.currentTarget.dataset.song || null,
+      screen:"personalChoice",
+      tab:"home",
+    });
+    return;
+  }
+
   if(action === "pick-mode"){
     const mode = e.currentTarget.dataset.mode;
     if(mode === "personal"){
-      setState({practiceMode:"personal", subMode:null, screen:"personalChoice"});
+      setState({practiceMode:"personal", subMode:null, selectedSongId:null, screen:"personalChoice"});
     }else{
-      setState({practiceMode: mode, subMode:null, screen:"instrumentSelect"});
+      setState({practiceMode: mode, subMode:null, selectedSongId:null, screen:"songSelect"});
     }
     return;
   }
@@ -1316,7 +3053,18 @@ async function onAction(e){
   if(action === "pick-personal-sub"){
     const sub = e.currentTarget.dataset.sub;
     const resets = sub === "aiband" ? {aiMissing:[], aiStyle:null} : {};
-    setState({subMode: sub, screen:"instrumentSelect", ...resets});
+    setState({subMode: sub, selectedSongId:null, screen:"songSelect", ...resets});
+    return;
+  }
+
+  if(action === "pick-song"){
+    setState({selectedSongId: e.currentTarget.dataset.song});
+    return;
+  }
+
+  if(action === "confirm-song"){
+    if(!state.selectedSongId) return;
+    setState({screen:"instrumentSelect"});
     return;
   }
 
@@ -1383,10 +3131,7 @@ async function onAction(e){
 
   if(action === "start-session"){
     stopLiveInterval();
-    const interval = setInterval(()=>{
-      setState({liveTick: state.liveTick + 1});
-    }, 2200);
-    setState({screen:"live", liveInterval:interval, liveTick:0});
+    setState({screen:"live", liveInterval:null, liveTick:0});
     return;
   }
 
@@ -1405,7 +3150,37 @@ async function onAction(e){
   }
 
   if(action === "go-report"){
-    setState({screen:"report", report: mockReport()});
+    setState({
+      screen:"report",
+      selectedReportId: state.selectedReportId || "rs1c",
+      selectedReportSong: state.selectedReportSong || "Autumn Leaves",
+      report: null,
+    });
+    return;
+  }
+
+  if(action === "select-report-song"){
+    const song = e.currentTarget.dataset.song;
+    const attempts = sessionsForSong(song);
+    const latest = attempts.length ? attempts[attempts.length - 1] : null;
+    setState({
+      selectedReportSong: song,
+      selectedReportId: latest ? latest.id : null,
+      report: latest,
+      screen: "report",
+    });
+    return;
+  }
+
+  if(action === "select-report-session"){
+    const id = e.currentTarget.dataset.session;
+    const session = (state.reportSessions || []).find(s => s.id === id);
+    setState({
+      selectedReportId: id,
+      selectedReportSong: session ? session.song : state.selectedReportSong,
+      report: session || null,
+      screen:"report",
+    });
     return;
   }
 
@@ -1429,14 +3204,35 @@ async function onAction(e){
       ...state.aiMissing.map(id => makeAiMember(id, state.aiStyle)),
     ];
     stopLiveInterval();
-    const interval = setInterval(()=>{ setState({liveTick: state.liveTick + 1}); }, 2200);
     setState({
       isHost: true,
       roomCode: null,
       members: aiBandMembers,
       screen: "live",
-      liveInterval: interval,
+      liveInterval: null,
       liveTick: 0,
+    });
+    return;
+  }
+
+  if(action === "toggle-ai-fill"){
+    const inst = e.currentTarget.dataset.inst;
+    const cur = state.aiFillSelected || [];
+    const aiFillSelected = cur.includes(inst)
+      ? cur.filter(id => id !== inst)
+      : [...cur, inst];
+    setState({aiFillSelected});
+    return;
+  }
+
+  if(action === "confirm-ai-fill"){
+    const selected = state.aiFillSelected || [];
+    if(!selected.length) return;
+    const added = selected.map(id => makeAiMember(id));
+    setState({
+      members: [...state.members, ...added],
+      aiFillSelected: [],
+      screen: "waitingRoom",
     });
     return;
   }
@@ -1448,7 +3244,7 @@ async function onAction(e){
   }
 
   if(action === "quick-ai-start"){
-    setState({practiceMode:"personal", subMode:"aiband", aiMissing:[], aiStyle:null, screen:"instrumentSelect"});
+    setState({practiceMode:"personal", subMode:"aiband", aiMissing:[], aiStyle:null, selectedSongId:null, screen:"songSelect"});
     return;
   }
 
@@ -1458,14 +3254,47 @@ async function onAction(e){
   }
 
   if(action === "toggle-darkmode"){
-    setState({darkModeOn: !state.darkModeOn});
+    const darkModeOn = !state.darkModeOn;
+    localStorage.setItem("SORI_DARK_MODE", darkModeOn ? "1" : "0");
+    setState({darkModeOn});
     return;
   }
 }
 
 // ---------- Init ----------
+function runSplash(){
+  const splash = document.getElementById("splash");
+  const soriEl = document.getElementById("splashSoriImg");
+  const withEl = document.getElementById("splashWith");
+  if(!splash) return;
+
+  // Only on first entry of this browser tab session
+  if(sessionStorage.getItem("SORI_SPLASH_DONE") === "1"){
+    splash.classList.add("gone");
+    return;
+  }
+
+  // SORI. fades in
+  requestAnimationFrame(()=>{
+    if(soriEl) soriEl.classList.add("show");
+  });
+
+  // WITH follows
+  setTimeout(()=>{
+    if(withEl) withEl.classList.add("show");
+  }, 700);
+
+  // Hold, then soft exit
+  setTimeout(()=>{
+    splash.classList.add("hide");
+    sessionStorage.setItem("SORI_SPLASH_DONE", "1");
+    setTimeout(()=>{ splash.classList.add("gone"); }, 800);
+  }, 2200);
+}
+
 render();
 checkHealth();
+runSplash();
 </script>
 </body>
 </html>

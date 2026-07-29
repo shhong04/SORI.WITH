@@ -1,85 +1,118 @@
 # SORI.WITH
 
-**AI Ensemble Platform 아키텍처 시뮬레이터** — SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics **제품 비전**을  
-합주 연습 API 흐름(개인 / 온라인 룸 / AI 세션 / 코칭)으로 연결한 **백엔드 프로토타입**입니다.
+**AI Ensemble Platform** — 합주 연습 · AI 세션 · 앙상블 분석 · 코칭을 한 흐름으로 묶은 **백엔드 + 모바일 UI** 프로토타입입니다.
 
-> **현재 상태 (정직한 요약)**  
-> FastAPI 프로토타입 + **P1 score-matched timing** + **P2 layered Sessionist**.  
-> pitch AMT, 본격 HMM/repeat graph, 영속 DB/auth는 아직 없습니다.
----
+SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics 비전을  
+**개인 연습 / 합주 룸 / AI Sessionist / 리포트** API와 화면으로 연결합니다.
 
-## 기능 요약
-
-| 기능 | 설명 | 실제 수준 |
-|------|------|-----------|
-| Offline Ensemble Analysis | 파트 WAV + MIDI → 리포트 API | **API + score-matched timing (P1)** |
-| Score Following (DTW) | onset ↔ score beat/event 정렬 + signed error | **P1 offline / online stub** |
-| AI 개인 연습 + Sessionist | score content + tempo transport + fail-safe live control | **P2 Sessionist** |
-| 실시간 코칭 tick + WebSocket | Drift/Breakdown 규칙 기반 피드백 | **policy skeleton** |
-| Ensemble Room | 다중 참가 · 빈 파트 AI fill · 룸 분석 | **API demo** |
-| Sessionist 오디오 렌더 | schedule → MIDI/WAV 스템 | **renderer** |
-
-상세·한계: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md)  
-아키텍처: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
-API: [`docs/API.md`](docs/API.md)
+> FastAPI 백엔드와 `web/` 앱 UI가 **같은 서버**에서 동작합니다.  
+> `http://127.0.0.1:8000/` 으로 UI와 API를 함께 사용할 수 있습니다.
 
 ---
 
-## SORI 기술 → 코드 매핑 (한눈에)
+## 주요 기능
 
-| SORI 기술 (비전) | 이 레포의 실제 구현 | 주요 코드 |
-|------------------|---------------------|-----------|
-| **Audio-to-MIDI / AMT** | onset · IOI tempo (pitch 전사 없음) | `audio/processing.py`, `engines/part_understanding.py` |
-| **Score Following** | onset–score DTW 정렬 + signed timing error (P1) | `engines/score_follower.py`, `part_understanding.py` |
-| **Adaptive Music Control** | content→transport→scheduler + live fail-safe (P2) | `engines/sessionist.py`, `audio/render.py` |
-| **Performance Analytics** | score-matched spread / windowed relation / coaching | `engines/ensemble_*.py`, `engines/coaching.py` |
+### 앱 UI (`web/`)
+
+| 기능 | 설명 |
+|------|------|
+| **홈 · Practice / Join Ensemble** | 개인 연습, 오프라인·온라인 합주 진입 |
+| **곡 선택 · Playlist** | 현재/과거 연습곡, YouTube 스타일 곡 추가 UI |
+| **악기 · 대기실 · AI 빈자리 채우기** | 파트 선택, 룸 코드, 결석 파트를 AI로 다중 선택 채움 |
+| **라이브 앙상블** | 피아노롤 시각화, 악기별 색 노트, 템포 알림, AI Sessionist 글로우 |
+| **AI 앙상블 리포트** | 곡별 점수 발전, 회차 선택, 팀원(AI 대체 표시), 타임라인 · 다음 연습 제안 |
+| **Profile** | 계정/빌링 설정형 레이아웃, 다크·라이트 모드, 알림 토글 |
+| **스플래시 · 브랜딩** | SORI.WITH 워드마크, 첫 진입 스플래시 |
+
+백엔드가 꺼져 있어도 UI는 **Demo Mode**로 플로우를 확인할 수 있습니다.
+
+### 백엔드 API (`sori_with/`)
+
+| 기능 | 설명 |
+|------|------|
+| **Offline Ensemble Analysis** | 파트 WAV + MIDI → sync / 리더 / Drift·Breakdown·Recovery 리포트 |
+| **Score Following (DTW)** | onset ↔ score beat 정렬 + signed timing error |
+| **AI Sessionist** | FOLLOW / ACCOMPANY, tempo transport, fail-safe hold |
+| **개인 연습 파이프라인** | 유저 연주 + AI 다른 파트 스케줄 · WAV/MIDI 렌더 |
+| **실시간 코칭 + WebSocket** | Drift/Breakdown 시 짧은 실행형 피드백 |
+| **Ensemble Room** | 방 생성 · join · 빈 파트 AI fill · 룸 분석 |
+
+상세 기술·한계: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md) · [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/API.md`](docs/API.md)
+
+---
+
+## 한눈에 보는 구조
 
 ```text
-파트 WAV/MIDI
-    ↓
-Onsets + Offline ScoreFollower (DTW)
-    ↓
-Part Understanding (matched bar/beat, signed error ms)
-    ↓
-Ensemble Clock + windowed Relations + State (hysteresis)
-    ├── Sessionist pattern schedule → WAV/MIDI
-    └── Coaching + Analytics Report
+파트 WAV / MIDI
+       ↓
+Onsets + Score Follower (DTW)
+       ↓
+Part Understanding → Ensemble Clock / Relations / State
+       ├── Sessionist schedule → WAV / MIDI
+       └── Coaching + Analytics Report
+              ↕
+        FastAPI + WebSocket
+              ↕
+     Mobile UI (web/index.html)
 ```
 
-다음 스프린트(P3): DB/auth/queue 등 제품화.  
-P2: Sessionist는 MIDI role content(가능 시) + 누적 tempo transport + look-ahead/live fail-safe.---
+| SORI 기술 (비전) | 이 레포 구현 | 주요 코드 |
+|------------------|--------------|-----------|
+| Audio-to-MIDI | onset · IOI tempo (pitch 전사 없음) | `audio/processing.py` |
+| Score Following | onset–score DTW + timing error | `engines/score_follower.py` |
+| Adaptive Music Control | Sessionist content + tempo transport | `engines/sessionist.py` |
+| Performance Analytics | sync / relation / coaching report | `engines/ensemble_*.py`, `coaching.py` |
+
+---
 
 ## 요구 사항
 
-- Python **3.13** (프로토타입 고정; 향후 MIR 라이브러리 도입 시 3.11/3.12 재검토 가능)
+- **Python 3.13**
 - macOS / Linux
 
-## 설치 & 실행
+---
+
+## 설치 & 실행 (프론트 + 백엔드 한 번에)
 
 ```bash
-git clone <YOUR_REPO_URL> SORI.WITH
+git clone https://github.com/shhong04/SORI.WITH.git
 cd SORI.WITH
 
 python3.13 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-uvicorn sori_with.api.main:app --reload --port 8000
+# (선택) 합성 데모 음원 생성
+python - <<'PY'
+from pathlib import Path
+from sori_with.tools.synthetic import build_synthetic_session
+print(build_synthetic_session(Path("data/synthetic_demo")))
+PY
+
+uvicorn sori_with.api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-- Swagger UI: http://127.0.0.1:8000/docs  
-- Health: http://127.0.0.1:8000/health  
-- **앱 프로토타입 UI**: http://127.0.0.1:8000/  
+| 주소 | 내용 |
+|------|------|
+| http://127.0.0.1:8000/ | **앱 UI** |
+| http://127.0.0.1:8000/docs | Swagger API 문서 |
+| http://127.0.0.1:8000/health | 헬스 체크 |
+| http://127.0.0.1:8000/web/ | 정적 UI 에셋 |
+
+폰에서 보려면 같은 Wi‑Fi의 `http://<Mac IP>:8000/` 또는 Cloudflare Tunnel 등으로 공개하면 됩니다.  
+(Quick Tunnel은 프로세스가 켜져 있는 동안만 유효하며, URL은 재시작 시 바뀝니다.)
 
 ### 환경 변수 (요약)
 
 | 변수 | 기본 | 설명 |
 |------|------|------|
 | `SORI_WITH_ENVIRONMENT` | `development` | `production`이면 로컬 path 분석 기본 비활성 |
-| `SORI_WITH_ALLOW_PATH_ANALYZE` | (자동) | `true`/`false`로 path 엔드포인트 강제 |
-| `SORI_WITH_CORS_ORIGINS` | localhost 5173/3000 | 콤마 구분 origin |
+| `SORI_WITH_ALLOW_PATH_ANALYZE` | (자동) | path 분석 엔드포인트 강제 |
+| `SORI_WITH_CORS_ORIGINS` | localhost | 콤마 구분 origin |
 | `SORI_WITH_MAX_UPLOAD_BYTES` | 52428800 | 업로드 최대 바이트 |
-| `SORI_WITH_KEEP_UPLOAD_ARTIFACTS` | `false` | `true`면 업로드 workdir 유지 |
+
+---
 
 ## 테스트
 
@@ -88,24 +121,13 @@ source .venv/bin/activate
 pytest -q
 ```
 
-합성 데이터(샘플 음원 불필요):
-
-```bash
-python - <<'PY'
-from pathlib import Path
-from sori_with.tools.synthetic import build_synthetic_session
-print(build_synthetic_session(Path("data/synthetic_demo")))
-PY
-```
-
 ---
 
-## 빠른 데모 (curl)
+## 빠른 API 데모
 
-> `/sessions/analyze/path` 및 practice path API는 **development**에서만 기본 활성입니다.  
-> 경로는 프로젝트/`data` 이하로 제한됩니다.
+> path 기반 분석은 **development**에서만 기본 활성입니다.
 
-### 1) 오프라인 합주 분석
+### 오프라인 합주 분석
 
 ```bash
 curl -s http://127.0.0.1:8000/api/v1/sessions/analyze/path \
@@ -123,7 +145,7 @@ curl -s http://127.0.0.1:8000/api/v1/sessions/analyze/path \
   }'
 ```
 
-### 2) 개인 연습 + AI Sessionist 렌더
+### 개인 연습 + Sessionist
 
 ```bash
 curl -s http://127.0.0.1:8000/api/v1/practice/analyze \
@@ -140,11 +162,11 @@ curl -s http://127.0.0.1:8000/api/v1/practice/analyze \
   }'
 ```
 
-### 3) Ensemble Room
+### Ensemble Room
 
 ```bash
-# 방 생성 → join → score/audio path 등록 → analyze
-curl -s http://127.0.0.1:8000/api/v1/rooms -H 'Content-Type: application/json' \
+curl -s http://127.0.0.1:8000/api/v1/rooms \
+  -H 'Content-Type: application/json' \
   -d '{"song_id":"band","room_name":"Campus","tempo_bpm":120}'
 ```
 
@@ -158,40 +180,39 @@ SORI.WITH/
 ├── LICENSE
 ├── requirements.txt
 ├── pyproject.toml
-├── config/thresholds.yaml          # 분석·코칭 임계값
-├── docs/
-│   ├── TECHNOLOGY.md               # 기술별 구현·한계
-│   ├── ARCHITECTURE.md             # 시스템 구조
-│   └── API.md                      # API 목록
-├── web/                            # 모바일 앱 프로토타입 (다크·코랄 UI)
+├── config/thresholds.yaml
+├── docs/                 # TECHNOLOGY · ARCHITECTURE · API
+├── web/                  # 모바일 앱 UI (index.html + 워드마크)
+│   ├── index.html
+│   └── sori-wordmark*.png
 ├── sori_with/
-│   ├── api/                        # FastAPI (sessions, practice, rooms, ws)
-│   ├── audio/                      # onset/tempo + Sessionist render
-│   ├── midi/                       # score graph (MIDI)
-│   ├── engines/                    # 휴리스틱 엔진
-│   ├── pipeline/                   # offline / practice 파이프라인
-│   ├── models/schemas.py           # Pydantic 스키마
-│   ├── realtime/hub.py             # WebSocket pub/sub
-│   ├── storage/                    # in-memory session/room
-│   └── tools/synthetic.py          # 테스트용 합성 합주 데이터
+│   ├── api/              # FastAPI routes + static UI mount
+│   ├── audio/            # onset/tempo + Sessionist render
+│   ├── midi/             # score graph
+│   ├── engines/          # follower · ensemble · sessionist · coaching
+│   ├── pipeline/         # offline / practice
+│   ├── models/
+│   ├── realtime/         # WebSocket hub
+│   ├── storage/
+│   └── tools/synthetic.py
 └── tests/
 ```
 
 ---
 
-## 설계 원칙
+## 현재 수준 (정직한 요약)
 
-1. **실시간 vs 사후 분리** — 실시간은 latency·보수적 판단, 사후는 전체 context로 재정렬  
-2. **confidence 낮으면 동작 보류** — Sessionist `hold`, 코칭 미출력  
-3. **비난형 피드백 금지** — `[현재 상태] + [기준 파트] + [실행 시점]`  
-4. **MVP 범위** — 최대 4파트, 4/4, 70–160 BPM, 파트별 독립 입력 가정  
+- **있음**: score-matched timing(P1), layered Sessionist(P2), Room/Practice API, 통합 모바일 UI
+- **아직 없음**: pitch AMT, 본격 HMM/repeat graph, 영속 DB · auth · 큐 (P3)
+
+설계 원칙: 실시간/사후 분리 · confidence 낮으면 hold · 비난형 피드백 금지 · MVP(최대 4파트, 4/4, 70–160 BPM)
 
 ---
 
-## 면책 / 관계
+## 면책
 
-- 본 저장소는 SORI(sori-ai.com) 공개 기술 방향을 참고한 독립 프로토타입입니다.  
-- SORI 공식 제품·모델 가중치·내부 API를 포함하지 않습니다.  
+본 저장소는 SORI(sori-ai.com) 공개 기술 방향을 참고한 **독립 프로토타입**입니다.  
+SORI 공식 제품·모델 가중치·내부 API를 포함하지 않습니다.
 
 ## License
 
