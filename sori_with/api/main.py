@@ -4,12 +4,14 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from sori_with import __version__
-from sori_with.api.routes.sessions import router as sessions_router
 from sori_with.api.routes.practice import router as practice_router
 from sori_with.api.routes.rooms import router as rooms_router
-from sori_with.config import get_settings
+from sori_with.api.routes.sessions import router as sessions_router
+from sori_with.config import ROOT, get_settings
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,6 +19,7 @@ logging.basicConfig(
 )
 
 settings = get_settings()
+WEB_DIR = ROOT / "web"
 
 app = FastAPI(
     title=settings.app_name,
@@ -51,3 +54,15 @@ def health() -> dict:
         "environment": settings.environment,
         "pathAnalyzeEnabled": settings.path_analyze_enabled,
     }
+
+
+@app.get("/")
+def app_home():
+    index = WEB_DIR / "index.html"
+    if index.exists():
+        return FileResponse(index)
+    return {"app": settings.app_name, "docs": "/docs", "health": "/health"}
+
+
+if WEB_DIR.exists():
+    app.mount("/web", StaticFiles(directory=str(WEB_DIR), html=True), name="web")

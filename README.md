@@ -69,6 +69,7 @@ uvicorn sori_with.api.main:app --reload --port 8000
 
 - Swagger UI: http://127.0.0.1:8000/docs  
 - Health: http://127.0.0.1:8000/health  
+- **앱 프로토타입 UI**: http://127.0.0.1:8000/  
 
 ### 환경 변수 (요약)
 
@@ -162,6 +163,7 @@ SORI.WITH/
 │   ├── TECHNOLOGY.md               # 기술별 구현·한계
 │   ├── ARCHITECTURE.md             # 시스템 구조
 │   └── API.md                      # API 목록
+├── web/                            # 모바일 앱 프로토타입 (다크·코랄 UI)
 ├── sori_with/
 │   ├── api/                        # FastAPI (sessions, practice, rooms, ws)
 │   ├── audio/                      # onset/tempo + Sessionist render
