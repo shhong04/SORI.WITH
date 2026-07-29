@@ -3,9 +3,6 @@
 **AI Ensemble Platform** — SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics를  
 합주 연습(개인 / 온라인 룸 / AI 세션 / 코칭)에 연결한 백엔드 프로토타입입니다.
 
-> 개인 연주 채점이 목표가 아닙니다.  
-> **누가 곡의 어디에 있는지, 누가 tempo를 주도하는지, 어디서 어긋나 어떻게 회복했는지**를 구조화합니다.
-
 ---
 
 ## 기능 요약
