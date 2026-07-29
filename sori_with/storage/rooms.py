@@ -96,5 +96,9 @@ class RoomStore:
             self._rooms[room_id] = room
             return room
 
+    def clear(self) -> None:
+        with self._lock:
+            self._rooms.clear()
+
 
 room_store = RoomStore()

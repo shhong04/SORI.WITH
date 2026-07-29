@@ -22,15 +22,17 @@ app = FastAPI(
     title=settings.app_name,
     version=__version__,
     description=(
-        "SORI.WITH AI Ensemble Platform backend "
-        "(Phase1 Analysis + Phase2 Practice/Sessionist + Phase3 Ensemble Room/Render)"
+        "SORI.WITH architecture simulator / backend prototype. "
+        "API flows for offline analysis, practice Sessionist, and ensemble rooms. "
+        "Core MIR (score following, AMT) is heuristic — not production music AI."
     ),
 )
 
+_cors = settings.cors_origin_list
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_cors if _cors else [],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -42,4 +44,10 @@ app.include_router(rooms_router, prefix=settings.api_prefix)
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "version": __version__, "app": settings.app_name}
+    return {
+        "status": "ok",
+        "version": __version__,
+        "app": settings.app_name,
+        "environment": settings.environment,
+        "pathAnalyzeEnabled": settings.path_analyze_enabled,
+    }

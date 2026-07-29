@@ -76,4 +76,7 @@
 
 - 단일 프로세스 in-memory → 멀티 워커 시 룸/세션 공유 불가  
 - 업로드는 `data/uploads`, 리포트는 `data/reports` (gitignore)  
-- 프로덕션 전에는 인증·용량 제한·CORS 재설정 필요  
+- `SORI_WITH_ENVIRONMENT=production` 시 로컬 path 분석 기본 비활성  
+- CORS는 `SORI_WITH_CORS_ORIGINS` 명시 origin만 허용 (`allow_credentials=False`)  
+- 업로드 크기·MIDI/WAV magic 검증 적용; 성공 시 workdir는 기본 삭제  
+- 인증·권한·영속 저장소는 아직 없음 (프로토타입)

@@ -42,17 +42,44 @@ class ThresholdConfig(BaseModel):
 class Settings(BaseSettings):
     app_name: str = "SORI.WITH"
     api_prefix: str = "/api/v1"
+    # development | production — production disables path-based analyze by default
+    environment: str = "development"
     data_dir: Path = ROOT / "data"
     upload_dir: Path = ROOT / "data" / "uploads"
     report_dir: Path = ROOT / "data" / "reports"
     thresholds_path: Path = DEFAULT_THRESHOLDS
+    # Comma-separated origins. Empty string → deny browser CORS (except non-browser clients).
+    cors_origins: str = (
+        "http://127.0.0.1:5173,http://localhost:5173,"
+        "http://127.0.0.1:3000,http://localhost:3000"
+    )
+    max_upload_bytes: int = 50 * 1024 * 1024
+    max_audio_duration_sec: float = 600.0
+    # None → enabled only when environment == development
+    allow_path_analyze: bool | None = None
+    keep_upload_artifacts: bool = False
 
     model_config = {"env_prefix": "SORI_WITH_"}
+
+    @property
+    def is_production(self) -> bool:
+        return self.environment.lower() in {"production", "prod"}
+
+    @property
+    def path_analyze_enabled(self) -> bool:
+        if self.allow_path_analyze is not None:
+            return self.allow_path_analyze
+        return not self.is_production
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
 @lru_cache
 def get_settings() -> Settings:
     settings = Settings()
+    settings.data_dir.mkdir(parents=True, exist_ok=True)
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
     settings.report_dir.mkdir(parents=True, exist_ok=True)
     return settings

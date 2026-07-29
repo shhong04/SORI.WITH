@@ -8,6 +8,14 @@ from pathlib import Path
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
+from sori_with.api.uploads import (
+    ANALYSIS_FAILED,
+    read_upload_limited,
+    require_path_analyze_enabled,
+    resolve_allowed_path,
+    validate_midi_bytes,
+    validate_wav_bytes,
+)
 from sori_with.config import get_settings
 from sori_with.models.schemas import (
     OfflineAnalyzeRequest,
@@ -83,12 +91,17 @@ async def analyze_session_upload(
     settings = get_settings()
     work = Path(tempfile.mkdtemp(prefix=f"{session_id}_", dir=settings.upload_dir))
     try:
+        midi_bytes = await read_upload_limited(midi, settings=settings)
+        validate_midi_bytes(midi_bytes)
         midi_path = work / "score.mid"
-        midi_path.write_bytes(await midi.read())
+        midi_path.write_bytes(midi_bytes)
+
         part_paths: dict[str, Path] = {}
         for name, uf in present.items():
+            data = await read_upload_limited(uf, settings=settings)
+            validate_wav_bytes(data)
             dest = work / f"{name}.wav"
-            dest.write_bytes(await uf.read())
+            dest.write_bytes(data)
             part_paths[name] = dest
 
         session.status = "analyzing"
@@ -104,24 +117,35 @@ async def analyze_session_upload(
         report_path = save_report(report)
         store.save_report(report)
         session.status = "ready"
-        session.artifact_paths = {
-            "report": str(report_path),
-            "workdir": str(work),
-        }
+        session.artifact_paths = {"report": str(report_path)}
+        if settings.keep_upload_artifacts:
+            session.artifact_paths["workdir"] = str(work)
         store.update_session(session)
         return JSONResponse(report.model_dump(mode="json"))
+    except HTTPException:
+        raise
     except Exception as exc:
-        logger.exception("analyze failed")
+        logger.exception("analyze failed: %s", exc)
         session.status = "failed"
-        session.error = str(exc)
+        session.error = ANALYSIS_FAILED["message"]
         store.update_session(session)
-        shutil.rmtree(work, ignore_errors=True)
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=ANALYSIS_FAILED) from exc
+    finally:
+        if not settings.keep_upload_artifacts:
+            shutil.rmtree(work, ignore_errors=True)
 
 
 @router.post("/sessions/analyze/path")
 def analyze_from_paths(body: OfflineAnalyzeRequest) -> dict:
-    """Analyze using local filesystem paths (dev/test)."""
+    """Analyze using local filesystem paths (development / tests only)."""
+    require_path_analyze_enabled()
+    settings = get_settings()
+    midi_path = resolve_allowed_path(body.midi_path, settings=settings)
+    part_wavs = {
+        part: str(resolve_allowed_path(path, settings=settings))
+        for part, path in body.parts.items()
+    }
+
     session = store.create_session(
         SessionCreate(
             mode=SessionMode.OFFLINE_ANALYSIS,
@@ -133,8 +157,8 @@ def analyze_from_paths(body: OfflineAnalyzeRequest) -> dict:
         report = run_offline_ensemble_analysis(
             session_id=session.session_id,
             song_id=body.song_id,
-            midi_path=body.midi_path,
-            part_wavs=body.parts,
+            midi_path=midi_path,
+            part_wavs=part_wavs,
             tempo_bpm=body.tempo_bpm,
             time_signature=body.time_signature,
         )
@@ -144,11 +168,14 @@ def analyze_from_paths(body: OfflineAnalyzeRequest) -> dict:
         session.artifact_paths = {"report": str(path)}
         store.update_session(session)
         return report.model_dump(mode="json")
+    except HTTPException:
+        raise
     except Exception as exc:
+        logger.exception("analyze/path failed: %s", exc)
         session.status = "failed"
-        session.error = str(exc)
+        session.error = ANALYSIS_FAILED["message"]
         store.update_session(session)
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        raise HTTPException(status_code=500, detail=ANALYSIS_FAILED) from exc
 
 
 @router.get("/sessions/{session_id}/report")
@@ -169,7 +196,7 @@ def get_dashboard(session_id: str) -> dict:
 
 @router.get("/sessions/{session_id}/state")
 def get_latest_state(session_id: str) -> dict:
-    """Phase 1 stub: returns last timeline sample from offline report."""
+    """Returns last timeline sample from offline report."""
     report = store.get_report(session_id)
     if not report:
         raise HTTPException(status_code=404, detail="report not found; run analyze first")

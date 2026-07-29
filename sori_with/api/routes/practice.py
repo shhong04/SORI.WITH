@@ -6,6 +6,11 @@ import logging
 
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
+from sori_with.api.uploads import (
+    ANALYSIS_FAILED,
+    require_path_analyze_enabled,
+    resolve_allowed_path,
+)
 from sori_with.config import get_settings
 from sori_with.engines.coaching import CoachingPolicyState, decide_coaching
 from sori_with.engines.sessionist import control_from_live_tick
@@ -29,8 +34,17 @@ router = APIRouter(tags=["practice-sessionist"])
 _policies: dict[str, CoachingPolicyState] = {}
 
 
+def clear_coaching_policies() -> None:
+    _policies.clear()
+
+
 @router.post("/practice/analyze")
 def practice_analyze(body: PracticeRequest) -> dict:
+    require_path_analyze_enabled()
+    settings = get_settings()
+    midi_path = resolve_allowed_path(body.midi_path, settings=settings)
+    user_wav = resolve_allowed_path(body.user_wav_path, settings=settings)
+
     session = store.create_session(
         SessionCreate(
             mode=SessionMode.PERSONAL_PRACTICE,
@@ -42,15 +56,14 @@ def practice_analyze(body: PracticeRequest) -> dict:
         report = run_personal_practice(
             session_id=session.session_id,
             song_id=body.song_id,
-            midi_path=body.midi_path,
+            midi_path=midi_path,
             user_part=body.user_part,
-            user_wav_path=body.user_wav_path,
+            user_wav_path=user_wav,
             sessionist_parts=body.sessionist_parts,
             sessionist_mode=body.sessionist_mode,
             tempo_bpm=body.tempo_bpm,
             render_audio=body.render_audio,
         )
-        settings = get_settings()
         out = settings.report_dir / f"{session.session_id}_practice.json"
         out.write_text(report.model_dump_json(indent=2), encoding="utf-8")
         store.save_practice_report(report)
@@ -58,12 +71,14 @@ def practice_analyze(body: PracticeRequest) -> dict:
         session.artifact_paths = {"practice_report": str(out)}
         store.update_session(session)
         return report.model_dump(mode="json")
+    except HTTPException:
+        raise
     except Exception as exc:
         session.status = "failed"
-        session.error = str(exc)
+        session.error = ANALYSIS_FAILED["message"]
         store.update_session(session)
-        logger.exception("practice analyze failed")
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        logger.exception("practice analyze failed: %s", exc)
+        raise HTTPException(status_code=500, detail=ANALYSIS_FAILED) from exc
 
 
 @router.get("/practice/{session_id}/report")
@@ -153,7 +168,6 @@ async def session_ws(websocket: WebSocket, session_id: str) -> None:
     await websocket.send_json({"type": "subscribed", "sessionId": session_id})
     try:
         while True:
-            # concurrently wait for hub events or client ping
             get_task = asyncio.create_task(queue.get())
             recv_task = asyncio.create_task(websocket.receive_text())
             done, pending = await asyncio.wait(
@@ -170,7 +184,6 @@ async def session_ws(websocket: WebSocket, session_id: str) -> None:
                     raw = recv_task.result()
                 except WebSocketDisconnect:
                     break
-                # client may send {"type":"ping"} or a live tick JSON
                 try:
                     data = json.loads(raw)
                 except json.JSONDecodeError:
@@ -178,7 +191,6 @@ async def session_ws(websocket: WebSocket, session_id: str) -> None:
                 if data.get("type") == "ping":
                     await websocket.send_json({"type": "pong"})
                 elif data.get("type") == "live_tick":
-                    # allow tick via websocket
                     body = LiveTickRequest.model_validate(data.get("payload", data))
                     body.session_id = session_id
                     result = await live_tick(body)

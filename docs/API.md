@@ -23,7 +23,7 @@ Prefix: `/api/v1`
 | GET | `/api/v1/sessions/{id}` | Get session |
 | POST | `/api/v1/sessions/{id}/participants` | Add participant |
 | POST | `/api/v1/sessions/{id}/analyze` | Upload MIDI + part WAVs, analyze |
-| POST | `/api/v1/sessions/analyze/path` | Analyze from local paths (dev) |
+| POST | `/api/v1/sessions/analyze/path` | Local paths (**dev only**; disabled in production) |
 | GET | `/api/v1/sessions/{id}/report` | Full analysis report |
 | GET | `/api/v1/sessions/{id}/dashboard` | Compact dashboard JSON |
 | GET | `/api/v1/sessions/{id}/state` | Last ensemble state sample |

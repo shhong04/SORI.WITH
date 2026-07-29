@@ -1,21 +1,25 @@
 # SORI.WITH
 
-**AI Ensemble Platform** — SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics를  
-합주 연습(개인 / 온라인 룸 / AI 세션 / 코칭)에 연결한 백엔드 프로토타입입니다.
+**AI Ensemble Platform 아키텍처 시뮬레이터** — SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics **제품 비전**을  
+합주 연습 API 흐름(개인 / 온라인 룸 / AI 세션 / 코칭)으로 연결한 **백엔드 프로토타입**입니다.
 
+> **현재 상태 (정직한 요약)**  
+> FastAPI 기반 **아키텍처·데모 플로우** + **P1 onset–score DTW 정렬 / signed timing deviation**.  
+> pitch AMT, 본격 HMM/repeat graph, 제품급 Sessionist는 아직 없습니다.
 ---
 
 ## 기능 요약
 
-| 기능 | 설명 | 상태 |
-|------|------|------|
-| Offline Ensemble Analysis | 파트별 WAV + MIDI → sync/리더/붕괴·회복 리포트 | Phase 1 ✅ |
-| AI 개인 연습 + Sessionist | 내 연주 추적 + AI 다른 파트 스케줄/렌더 | Phase 2 ✅ |
-| 실시간 코칭 tick + WebSocket | Drift/Breakdown 핵심 피드백만 | Phase 2 ✅ |
-| Ensemble Room | 다중 참가 · 빈 파트 AI 채움 · 룸 분석 | Phase 3 ✅ |
-| Sessionist 오디오 렌더 | MIDI/WAV 스템 합성 | Phase 3 ✅ |
+| 기능 | 설명 | 실제 수준 |
+|------|------|-----------|
+| Offline Ensemble Analysis | 파트 WAV + MIDI → 리포트 API | **API + score-matched timing (P1)** |
+| Score Following (DTW) | onset ↔ score beat/event 정렬 + signed error | **P1 offline / online stub** |
+| AI 개인 연습 + Sessionist | 연습 리포트 + 고정 패턴 스케줄/렌더 | **demo flow** |
+| 실시간 코칭 tick + WebSocket | Drift/Breakdown 규칙 기반 피드백 | **policy skeleton** |
+| Ensemble Room | 다중 참가 · 빈 파트 AI fill · 룸 분석 | **API demo** |
+| Sessionist 오디오 렌더 | 패턴 → MIDI/WAV 스템 | **synthetic render** |
 
-상세 기술 설명: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md)  
+상세·한계: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md)  
 아키텍처: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
 API: [`docs/API.md`](docs/API.md)
 
@@ -23,28 +27,32 @@ API: [`docs/API.md`](docs/API.md)
 
 ## SORI 기술 → 코드 매핑 (한눈에)
 
-| SORI 기술 | 이 레포에서의 역할 | 주요 코드 |
-|-----------|-------------------|-----------|
-| **Audio-to-MIDI / AMT** | 파트 오디오 → onset · local tempo | `sori_with/audio/processing.py`, `engines/part_understanding.py` |
-| **Score Following** | MIDI 기준 bar/beat/section 정렬 | `sori_with/midi/score.py`, `engines/part_understanding.py` |
-| **Adaptive Music Control** | AI Sessionist FOLLOW/ACCOMPANY, hold on low confidence | `engines/sessionist.py`, `audio/render.py` |
-| **Performance Analytics** | Ensemble state · relation · coaching · report | `engines/ensemble_*.py`, `engines/coaching.py`, `pipeline/*` |
+| SORI 기술 (비전) | 이 레포의 실제 구현 | 주요 코드 |
+|------------------|---------------------|-----------|
+| **Audio-to-MIDI / AMT** | onset · IOI tempo (pitch 전사 없음) | `audio/processing.py`, `engines/part_understanding.py` |
+| **Score Following** | onset–score DTW 정렬 + signed timing error (P1) | `engines/score_follower.py`, `part_understanding.py` |
+| **Adaptive Music Control** | 고정 패턴 Sessionist + stretch | `engines/sessionist.py`, `audio/render.py` |
+| **Performance Analytics** | score-matched spread / windowed relation / coaching | `engines/ensemble_*.py`, `engines/coaching.py` |
 
 ```text
 파트 WAV/MIDI
     ↓
-Part Understanding (onset, tempo, bar/beat)
+Onsets + Offline ScoreFollower (DTW)
     ↓
-Ensemble Clock + Relations + State (stable/drift/breakdown/recovery)
-    ├── Adaptive Sessionist (다른 파트 연주 스케줄 → WAV/MIDI)
+Part Understanding (matched bar/beat, signed error ms)
+    ↓
+Ensemble Clock + windowed Relations + State (hysteresis)
+    ├── Sessionist pattern schedule → WAV/MIDI
     └── Coaching + Analytics Report
 ```
 
+다음 스프린트(P2): Sessionist를 실제 score content + scheduler로 재설계.  
+P1 목표(정렬 + signed deviation)는 `follow_score_offline` / 리포트 필드로 반영됨.
 ---
 
 ## 요구 사항
 
-- Python **3.13**
+- Python **3.13** (프로토타입 고정; 향후 MIR 라이브러리 도입 시 3.11/3.12 재검토 가능)
 - macOS / Linux
 
 ## 설치 & 실행
@@ -62,6 +70,16 @@ uvicorn sori_with.api.main:app --reload --port 8000
 
 - Swagger UI: http://127.0.0.1:8000/docs  
 - Health: http://127.0.0.1:8000/health  
+
+### 환경 변수 (요약)
+
+| 변수 | 기본 | 설명 |
+|------|------|------|
+| `SORI_WITH_ENVIRONMENT` | `development` | `production`이면 로컬 path 분석 기본 비활성 |
+| `SORI_WITH_ALLOW_PATH_ANALYZE` | (자동) | `true`/`false`로 path 엔드포인트 강제 |
+| `SORI_WITH_CORS_ORIGINS` | localhost 5173/3000 | 콤마 구분 origin |
+| `SORI_WITH_MAX_UPLOAD_BYTES` | 52428800 | 업로드 최대 바이트 |
+| `SORI_WITH_KEEP_UPLOAD_ARTIFACTS` | `false` | `true`면 업로드 workdir 유지 |
 
 ## 테스트
 
@@ -83,6 +101,9 @@ PY
 ---
 
 ## 빠른 데모 (curl)
+
+> `/sessions/analyze/path` 및 practice path API는 **development**에서만 기본 활성입니다.  
+> 경로는 프로젝트/`data` 이하로 제한됩니다.
 
 ### 1) 오프라인 합주 분석
 
@@ -139,14 +160,14 @@ SORI.WITH/
 ├── pyproject.toml
 ├── config/thresholds.yaml          # 분석·코칭 임계값
 ├── docs/
-│   ├── TECHNOLOGY.md               # 기술별 구현 설명
+│   ├── TECHNOLOGY.md               # 기술별 구현·한계
 │   ├── ARCHITECTURE.md             # 시스템 구조
 │   └── API.md                      # API 목록
 ├── sori_with/
 │   ├── api/                        # FastAPI (sessions, practice, rooms, ws)
 │   ├── audio/                      # onset/tempo + Sessionist render
 │   ├── midi/                       # score graph (MIDI)
-│   ├── engines/                    # SORI 대응 핵심 엔진
+│   ├── engines/                    # 휴리스틱 엔진
 │   ├── pipeline/                   # offline / practice 파이프라인
 │   ├── models/schemas.py           # Pydantic 스키마
 │   ├── realtime/hub.py             # WebSocket pub/sub

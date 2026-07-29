@@ -82,7 +82,8 @@ class ScorePosition(BaseModel):
 
 class PartConfidence(BaseModel):
     onset: float = 0.0
-    pitch: float = 0.0
+    pitch: float | None = None
+    pitch_supported: bool = False
     tempo: float = 0.0
     position: float = 0.0
 
@@ -124,6 +125,10 @@ class EnsembleRelation(BaseModel):
     lag_ms: float
     strength: float
     confidence: float
+    start_bar: int | None = None
+    end_bar: int | None = None
+    evidence_count: int = 0
+    note: str = "probable influence (not causal)"
 
 
 class EnsembleState(BaseModel):
@@ -188,6 +193,9 @@ class AnalysisReport(BaseModel):
     breakdown_point: dict[str, Any] | None = None
     recovery_point: dict[str, Any] | None = None
     part_timing_deviation_ms: dict[str, float]
+    part_signed_timing_deviation_ms: dict[str, float] = Field(default_factory=dict)
+    part_alignment_confidence: dict[str, float] = Field(default_factory=dict)
+    timing_windows: list[dict[str, Any]] = Field(default_factory=list)
     recommended_practice: list[RecommendedPractice] = Field(default_factory=list)
     evidence_notes: list[str] = Field(default_factory=list)
 

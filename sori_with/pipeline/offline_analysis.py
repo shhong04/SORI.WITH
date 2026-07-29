@@ -6,7 +6,13 @@ from typing import Any
 
 from sori_with.config import get_settings
 from sori_with.engines.ensemble_clock import estimate_ensemble_clock
-from sori_with.engines.ensemble_relationship import estimate_relations, timing_deviation_ms
+from sori_with.engines.ensemble_relationship import (
+    alignment_confidence_map,
+    estimate_relations,
+    signed_timing_deviation_ms,
+    timing_deviation_ms,
+    windowed_timing_deviation,
+)
 from sori_with.engines.ensemble_state import (
     build_events,
     build_state_timeline,
@@ -54,11 +60,14 @@ def run_offline_ensemble_analysis(
             )
         )
 
-    clocks = estimate_ensemble_clock(parts)
+    clocks = estimate_ensemble_clock(parts, time_signature=score.time_signature)
     relations = estimate_relations(parts)
     timeline = build_state_timeline(parts, clocks)
     ref = clocks[0].reference_part_id if clocks else None
     deviations = timing_deviation_ms(parts, ref)
+    signed = signed_timing_deviation_ms(parts)
+    align_conf = alignment_confidence_map(parts)
+    windows = windowed_timing_deviation(parts)
     events = build_events(session_id, parts, timeline, relations)
     breakdown, recovery = detect_breakdown_recovery(timeline)
 
@@ -110,10 +119,27 @@ def run_offline_ensemble_analysis(
         breakdown_point=breakdown,
         recovery_point=recovery,
         part_timing_deviation_ms=deviations,
+        part_signed_timing_deviation_ms=signed,
+        part_alignment_confidence=align_conf,
+        timing_windows=[
+            {
+                "partId": w.part_id,
+                "windowStart": w.window_start,
+                "windowEnd": w.window_end,
+                "meanAbsMs": w.mean_abs_ms,
+                "meanSignedMs": w.mean_signed_ms,
+                "slopeMsPerBeat": w.slope_ms_per_beat,
+                "direction": w.direction,
+                "nMatches": w.n_matches,
+            }
+            for w in windows
+        ],
         recommended_practice=recommended,
         evidence_notes=[
-            "Relations are probable influence estimates, not definitive blame.",
-            "Realtime coaching should use confidence thresholds before surfacing messages.",
+            "Score positions come from onset–score DTW alignment (not wall-clock mapping).",
+            "part_signed_timing_deviation_ms: positive = late vs matched score event.",
+            "Relations are probable influence estimates in time windows, not definitive blame.",
+            "Realtime coaching should use alignment confidence thresholds before surfacing messages.",
         ],
     )
     return report
@@ -138,6 +164,9 @@ def report_to_dashboard_payload(report: AnalysisReport) -> dict[str, Any]:
         "breakdownPoint": report.breakdown_point,
         "recoveryPoint": report.recovery_point,
         "partTimingDeviationMs": report.part_timing_deviation_ms,
+        "partSignedTimingDeviationMs": report.part_signed_timing_deviation_ms,
+        "partAlignmentConfidence": report.part_alignment_confidence,
+        "timingWindows": report.timing_windows[:24],
         "stateHistogram": _state_histogram(report),
         "relations": [r.model_dump(mode="json") for r in report.relations],
         "events": [e.model_dump(mode="json") for e in report.events],

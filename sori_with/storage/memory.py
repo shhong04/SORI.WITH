@@ -83,5 +83,11 @@ class InMemoryStore:
         with self._lock:
             return list(self._sessions.values())
 
+    def clear(self) -> None:
+        with self._lock:
+            self._sessions.clear()
+            self._reports.clear()
+            self._practice_reports.clear()
+
 
 store = InMemoryStore()

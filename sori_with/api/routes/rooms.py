@@ -8,6 +8,14 @@ from pathlib import Path
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 
+from sori_with.api.uploads import (
+    ANALYSIS_FAILED,
+    read_upload_limited,
+    require_path_analyze_enabled,
+    resolve_allowed_path,
+    validate_midi_bytes,
+    validate_wav_bytes,
+)
 from sori_with.audio.render import render_sessionist_bundle
 from sori_with.config import get_settings
 from sori_with.engines.sessionist import plan_sessionist_schedule
@@ -88,8 +96,10 @@ async def upload_room_score(
     settings = get_settings()
     dest_dir = settings.upload_dir / room_id
     dest_dir.mkdir(parents=True, exist_ok=True)
+    midi_bytes = await read_upload_limited(midi, settings=settings)
+    validate_midi_bytes(midi_bytes)
     midi_path = dest_dir / "score.mid"
-    midi_path.write_bytes(await midi.read())
+    midi_path.write_bytes(midi_bytes)
     room = room_store.set_midi(room_id, str(midi_path))
     await hub.publish(room_id, {"type": "score_uploaded", "roomId": room_id})
     return room.model_dump(mode="json")
@@ -110,8 +120,10 @@ async def upload_member_audio(
     dest_dir = settings.upload_dir / room_id / "parts"
     dest_dir.mkdir(parents=True, exist_ok=True)
     member = next(m for m in room.members if m.user_id == user_id)
+    data = await read_upload_limited(audio, settings=settings)
+    validate_wav_bytes(data)
     dest = dest_dir / f"{member.part_id}_{user_id}.wav"
-    dest.write_bytes(await audio.read())
+    dest.write_bytes(data)
     room = room_store.set_member_audio(room_id, user_id, str(dest))
     await hub.publish(
         room_id,
@@ -127,11 +139,11 @@ async def upload_member_audio(
 
 @router.post("/rooms/{room_id}/score/path")
 async def set_score_path(room_id: str, midi_path: str = Form(...)) -> dict:
+    require_path_analyze_enabled()
     if not room_store.get(room_id):
         raise HTTPException(status_code=404, detail="room not found")
-    if not Path(midi_path).exists():
-        raise HTTPException(status_code=400, detail="midi path not found")
-    room = room_store.set_midi(room_id, midi_path)
+    resolved = resolve_allowed_path(midi_path)
+    room = room_store.set_midi(room_id, str(resolved))
     return room.model_dump(mode="json")
 
 
@@ -141,16 +153,15 @@ async def set_audio_path(
     user_id: str,
     audio_path: str = Form(...),
 ) -> dict:
+    require_path_analyze_enabled()
     if not room_store.get(room_id):
         raise HTTPException(status_code=404, detail="room not found")
-    if not Path(audio_path).exists():
-        raise HTTPException(status_code=400, detail="audio path not found")
+    resolved = resolve_allowed_path(audio_path)
     try:
-        room = room_store.set_member_audio(room_id, user_id, audio_path)
+        room = room_store.set_member_audio(room_id, user_id, str(resolved))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="member not found") from exc
     return room.model_dump(mode="json")
-
 
 @router.post("/rooms/{room_id}/start")
 async def start_rehearsal(room_id: str) -> dict:
@@ -197,7 +208,6 @@ async def analyze_room(
             missing = [p for p in needed if p not in part_wavs]
             if missing:
                 score = load_midi_score(room.midi_path, default_tempo_bpm=room.tempo_bpm)
-                # estimate tempo curve from first human part
                 from sori_with.engines.part_understanding import analyze_part
 
                 first_part, first_wav = next(iter(human_parts.items()))
@@ -268,12 +278,16 @@ async def analyze_room(
             "reportPath": str(report_path),
             "aiSessionistParts": ai_parts,
         }
+    except HTTPException:
+        raise
     except Exception as exc:
         room.status = "open"
         room_store.update(room)
-        shutil.rmtree(work, ignore_errors=True)
-        logger.exception("room analyze failed")
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        logger.exception("room analyze failed: %s", exc)
+        raise HTTPException(status_code=500, detail=ANALYSIS_FAILED) from exc
+    finally:
+        if not settings.keep_upload_artifacts:
+            shutil.rmtree(work, ignore_errors=True)
 
 
 @router.get("/rooms/{room_id}/dashboard")
