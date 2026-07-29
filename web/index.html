@@ -319,7 +319,7 @@
 </div>
 
 <script>
-const API_BASE = (typeof location !== "undefined" && location.port === "8000")
+const API_BASE = (typeof location !== "undefined" && location.protocol.startsWith("http"))
   ? location.origin
   : (localStorage.getItem("SORI_API_BASE") || "http://127.0.0.1:8000");
 

@@ -54,7 +54,8 @@ class Settings(BaseSettings):
     cors_origins: str = (
         "http://127.0.0.1:5173,http://localhost:5173,"
         "http://127.0.0.1:3000,http://localhost:3000,"
-        "http://127.0.0.1:8000,http://localhost:8000,null"
+        "http://127.0.0.1:8000,http://localhost:8000,null,"
+        "http://10.249.183.61:8000"
     )
     max_upload_bytes: int = 50 * 1024 * 1024
     max_audio_duration_sec: float = 600.0
