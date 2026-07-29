@@ -20,5 +20,3 @@ venv/
 htmlcov/
 *.wav
 *.mid
-node_modules/
-web/dist/

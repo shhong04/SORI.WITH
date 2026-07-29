@@ -14,12 +14,10 @@
 | 실시간 코칭 tick + WebSocket | Drift/Breakdown 핵심 피드백만 | Phase 2 ✅ |
 | Ensemble Room | 다중 참가 · 빈 파트 AI 채움 · 룸 분석 | Phase 3 ✅ |
 | Sessionist 오디오 렌더 | MIDI/WAV 스템 합성 | Phase 3 ✅ |
-| Visual Demo (web/) | 스토리보드 UI · AI ON/OFF · 코칭 · 리포트 | ✅ |
 
 상세 기술 설명: [`docs/TECHNOLOGY.md`](docs/TECHNOLOGY.md)  
 아키텍처: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
-API: [`docs/API.md`](docs/API.md)  
-비주얼 데모: [`web/README.md`](web/README.md)
+API: [`docs/API.md`](docs/API.md)
 
 ---
 
@@ -64,21 +62,6 @@ uvicorn sori_with.api.main:app --reload --port 8000
 
 - Swagger UI: http://127.0.0.1:8000/docs  
 - Health: http://127.0.0.1:8000/health  
-
-## 비주얼 데모 (웹)
-
-백엔드와 별도로 Vite + React UI가 `web/`에 있습니다. API가 없어도 스토리보드가 돌아가고, 백엔드가 켜져 있으면 리포트·라이브 코칭을 붙입니다.
-
-```bash
-# 터미널 1 — API
-source .venv/bin/activate
-uvicorn sori_with.api.main:app --reload --port 8000
-
-# 터미널 2 — UI
-cd web && npm install && npm run dev
-```
-
-브라우저: http://127.0.0.1:5173
 
 ## 테스트
 
@@ -159,7 +142,6 @@ SORI.WITH/
 │   ├── TECHNOLOGY.md               # 기술별 구현 설명
 │   ├── ARCHITECTURE.md             # 시스템 구조
 │   └── API.md                      # API 목록
-├── web/                            # Vite + React 비주얼 데모
 ├── sori_with/
 │   ├── api/                        # FastAPI (sessions, practice, rooms, ws)
 │   ├── audio/                      # onset/tempo + Sessionist render
