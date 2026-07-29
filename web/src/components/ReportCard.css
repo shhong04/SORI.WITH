@@ -1,0 +1,94 @@
+.report {
+  border-radius: 20px;
+  padding: 18px;
+  background: #1f1c19;
+  color: #f6f1ea;
+}
+
+.report h3 {
+  margin: 0 0 4px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.25rem;
+}
+
+.lead {
+  margin: 0 0 14px;
+  color: rgba(246, 241, 234, 0.7);
+  font-size: 0.9rem;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.stat .k {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(246, 241, 234, 0.55);
+  margin-bottom: 4px;
+}
+
+.stat .v {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.bars {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #2a9d8f;
+}
+.bar-fill.drift {
+  background: #e9c46a;
+}
+.bar-fill.breakdown {
+  background: #e85d4c;
+}
+.bar-fill.recovery {
+  background: #4cc9a0;
+}
+
+.dev-list {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: rgba(246, 241, 234, 0.8);
+  font-size: 0.85rem;
+}
+
+.hint {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: rgba(246, 241, 234, 0.55);
+}

@@ -1,0 +1,35 @@
+.coach {
+  border-radius: 20px;
+  padding: 16px 18px;
+  background: #fff;
+  border: 1px solid rgba(40, 40, 40, 0.08);
+  min-height: 110px;
+}
+
+.coach.active {
+  background: linear-gradient(180deg, #fff 0%, #fff8f0 100%);
+  border-color: rgba(232, 93, 76, 0.25);
+}
+
+.coach-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e85d4c;
+  margin-bottom: 8px;
+}
+
+.coach p {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: #2b2a28;
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.coach.empty p {
+  color: #8a847c;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.95rem;
+}
