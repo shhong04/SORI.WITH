@@ -1,0 +1,34 @@
+# SORI.WITH Phase 1 analysis thresholds
+sample_rate: 48000
+hop_length: 512
+onset_energy_percentile: 85.0
+min_onset_gap_sec: 0.05
+
+# Ensemble state
+stable_timing_spread_ms: 40.0
+drift_timing_spread_ms: 80.0
+breakdown_timing_spread_ms: 160.0
+min_state_duration_beats: 2.0
+
+# Tempo
+tempo_smoothing_window: 8
+default_tempo_bpm: 120.0
+tempo_min_bpm: 70.0
+tempo_max_bpm: 160.0
+
+# Role priors for ensemble clock (higher = more rhythmic reference weight)
+role_prior:
+  drums: 1.4
+  bass: 1.2
+  guitar: 1.0
+  keyboard: 1.0
+  vocal: 0.8
+
+# Coaching / report
+deviation_significance_ms: 60.0
+propagation_lag_window_ms: 800.0
+
+# Sessionist / coaching realtime
+sessionist_confidence_floor: 0.45
+coaching_cooldown_sec: 4.0
+
