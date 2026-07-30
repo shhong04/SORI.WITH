@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SORI.WITH · 시연 안내</title>
+<style>
+  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+  :root {
+    --bg0: #0a0a0a;
+    --bg1: #141414;
+    --ink: #f4f1ec;
+    --muted: #9a9690;
+    --accent: #e02020;
+    --line: rgba(255,255,255,0.1);
+    --card: rgba(255,255,255,0.04);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(224,32,32,0.18), transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, rgba(255,255,255,0.05), transparent 50%),
+      var(--bg0);
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1.25rem;
+  }
+
+  .brand {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .brand span { color: var(--accent); }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 28rem;
+    margin: 0.55rem 0 0;
+    line-height: 1.45;
+  }
+
+  .qr-box {
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 0.9rem 1rem 1rem;
+    min-width: 180px;
+  }
+  .qr-box img {
+    width: 148px;
+    height: 148px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto 0.55rem;
+  }
+  .qr-box a {
+    color: var(--ink);
+    font-size: 0.78rem;
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .qr-box .hint {
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-top: 0.35rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 1.15rem 1.25rem 1.25rem;
+  }
+
+  h2 {
+    margin: 0 0 0.85rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  ol, ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    line-height: 1.55;
+  }
+  li { margin: 0.45rem 0; }
+  li strong { font-weight: 700; }
+
+  .roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .role {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.85rem 0.95rem;
+    background: rgba(0,0,0,0.25);
+  }
+  .role h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+  }
+  .role p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .steps li::marker { color: var(--accent); font-weight: 700; }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .links a {
+    display: inline-block;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.85rem;
+    background: rgba(255,255,255,0.03);
+  }
+  .links a:hover { border-color: var(--accent); }
+
+  footer {
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.84em;
+    background: rgba(255,255,255,0.06);
+    padding: 0.1em 0.35em;
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="brand">SORI<span>.</span>WITH</div>
+      <p class="tagline">모니터 + 폰 참여형 시연 안내 · 엔진 분석은 모니터, 합주 UX는 관객 폰</p>
+    </div>
+    <div class="qr-box">
+      <img src="sori-with-qr.png" alt="SORI.WITH QR" width="148" height="148" />
+      <a href="https://sori-with.onrender.com/" target="_blank" rel="noopener">sori-with.onrender.com</a>
+      <div class="hint">관객용 · 앱 UI 스캔</div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section>
+      <h2>역할</h2>
+      <div class="roles">
+        <div class="role">
+          <h3>모니터 · 발표자</h3>
+          <p>Swagger /docs 또는 분석 결과 보드. tempo · DTW · timing/relation을 보여 줍니다.</p>
+        </div>
+        <div class="role">
+          <h3>폰 · 관객</h3>
+          <p>QR로 앱 접속 → 방 만들기 / 코드 참가. 합주 UX를 직접 눌러 봅니다.</p>
+        </div>
+      </div>
+
+      <div class="links">
+        <a href="/docs" target="_blank">API Docs</a>
+        <a href="/web/demo-analyze.html" target="_blank">Analyze 결과</a>
+        <a href="/" target="_blank">앱 UI</a>
+        <a href="https://sori-with.onrender.com/" target="_blank">Render</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>진행 순서 (~3–4분)</h2>
+      <ol class="steps">
+        <li><strong>문제</strong> — 합주 sync가 깨져도 원인이 안 보인다.</li>
+        <li><strong>엔진 (모니터)</strong> — 터미널에서<br>
+          <code>./scripts/demo_analyze.sh http://127.0.0.1:8000</code><br>
+          또는 /docs에서 session 생성 → analyze 업로드.</li>
+        <li><strong>세 줄 짚기</strong> — tempo (onset+IOI) → alignment (DTW) → timing/relation.</li>
+        <li><strong>제품 (폰)</strong> — 관객 A 방 만들기, 관객 B 코드 참가.</li>
+        <li><strong>마무리</strong> — 소리의 듣고·맞추고·진단 → 합주 연습 제품.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>발표 전 체크</h2>
+      <ul>
+        <li>Render를 한 번 열어 cold start 깨우기</li>
+        <li>로컬 API: <code>uvicorn sori_with.api.main:app --host 0.0.0.0 --port 8000</code></li>
+        <li>모니터 탭: <code>/docs</code> + <code>/web/demo-analyze.html</code></li>
+        <li>합성 음원은 스크립트가 자동 생성 (업로드 시연용)</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>관객 멘트</h2>
+      <ul>
+        <li>“지금 올리는 건 합성 합주 WAV + 악보입니다.”</li>
+        <li>“엔진이 템포·악보 정렬·파트 관계를 숫자로 냅니다.”</li>
+        <li>“폰 앱은 그 루프를 합주 UX로 묶은 프로토타입입니다.”</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    Wi‑Fi가 불안하면 앱도 로컬: <code>http://&lt;MacIP&gt;:8000/</code> 을 별도 QR로 쓰세요.
+    엔진 시연은 로컬 API가 안정적이고, 관객 UX는 Render QR이 편합니다.
+  </footer>
+</main>
+</body>
+</html>

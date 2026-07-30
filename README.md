@@ -143,6 +143,7 @@ uvicorn sori_with.api.main:app --host 0.0.0.0 --port 8000
 - 터미널: tempo / alignment / timing·relation 요약
 - `data/demo_analyze_summary.json` · `data/demo_analyze_full.json`
 - 브라우저: 서버 켠 뒤 `http://127.0.0.1:8000/web/demo-analyze.html`
+- 참여형 시연 안내(모니터용): `http://127.0.0.1:8000/web/demo-guide.html`
 - Swagger 수동 시연: `/docs` → `POST /api/v1/sessions` → `POST /api/v1/sessions/{id}/analyze` (midi + vocal/guitar/bass/drums)
 
 ---
