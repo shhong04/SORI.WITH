@@ -224,49 +224,12 @@ SORI.WITH/
 
 ---
 
-## 현재 수준 (정직한 요약)
+## 현재 수준 
 
 - **있음**: score-matched timing(P1), layered Sessionist(P2), Room/Practice API, 통합 모바일 UI
 - **아직 없음**: pitch AMT, 본격 HMM/repeat graph, 영속 DB · auth · 큐 (P3)
 
 설계 원칙: 실시간/사후 분리 · confidence 낮으면 hold · 비난형 피드백 금지 · MVP(최대 4파트, 4/4, 70–160 BPM)
-
----
-
-## 3일 데모 배포 (Render Free 추천 — 결제 불필요)
-
-Mac을 꺼도 유지되는 **고정 URL**로 올리는 방법입니다. Blueprint 기본값은 **Free**라서 카드/결제 없이 데모 가능합니다.
-
-### 1) 코드 push (이미 GitHub에 있으면 pull 최신만)
-
-```bash
-git push origin main
-```
-
-### 2) Render에 연결 (Blueprints)
-
-1. [https://dashboard.render.com/blueprints](https://dashboard.render.com/blueprints) 또는 **New → Blueprint**  
-2. GitHub 저장소 `shhong04/SORI.WITH` 연결·선택 (`render.yaml` 자동 인식, plan: `free`)  
-3. Apply / Deploy  
-4. 생성 후 URL 예: `https://sori-with.onrender.com` (서비스 이름에 따라 `*.onrender.com`)
-
-환경 변수는 Blueprint에 이미 들어 있습니다 (`production`, path 분석 차단, CORS `*`).
-
-### 3) Free 플랜 주의 (데모 OK)
-
-- **Free**는 한동안 접속이 없으면 잠듭니다. 다시 켤 때 **첫 로딩이 느릴 수** 있습니다(콜드 스타트).  
-- 3일 데모는 Free로 충분합니다. 잠들어도 URL은 그대로입니다.  
-- 항상 깨어 있어야만 하면 Dashboard에서 선택적으로 **Starter**(유료)로 올리면 됩니다. 필수는 아닙니다.
-
-### Railway 대안
-
-1. [https://railway.app](https://railway.app) → New Project → Deploy from GitHub  
-2. 이 저장소 선택 (Dockerfile / `railway.json` 사용)  
-3. Variables에 위와 동일 env 설정  
-4. Generate Domain으로 공개 URL 발급
-
-로컬 터널(`trycloudflare`)과 달리, 배포 URL은 **서버가 떠 있는 동안 고정**입니다.  
-회원가입/배포가 번거로우면 Mac에서 터널로도 공유할 수 있습니다.
 
 ---
 
