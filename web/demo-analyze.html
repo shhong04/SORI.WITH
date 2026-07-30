@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SORI.WITH · Analyze Demo</title>
+  <style>
+    :root { color-scheme: light; font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif; }
+    body { margin: 0; background: #f3f1ec; color: #1a1a1a; }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
+    .sub { color: #555; margin-bottom: 1.5rem; font-size: .95rem; }
+    section { background: #fff; border: 1px solid #ddd; border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
+    h2 { font-size: .85rem; letter-spacing: .04em; text-transform: uppercase; color: #c23; margin: 0 0 .6rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    td, th { text-align: left; padding: .35rem .2rem; border-bottom: 1px solid #eee; }
+    pre { overflow: auto; font-size: .78rem; background: #faf8f5; padding: .8rem; border-radius: 8px; }
+    .pill { display: inline-block; background: #fde8e6; color: #a01812; padding: .15rem .5rem; border-radius: 999px; font-size: .8rem; margin-right: .35rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>SORI.WITH · Offline Analyze Demo</h1>
+  <p class="sub">onset + IOI tempo · onset–score DTW · part timing / relation</p>
+  <section>
+    <h2>Tempo (ensemble clock)</h2>
+    <pre id="tempo"></pre>
+  </section>
+  <section>
+    <h2>Alignment confidence (DTW)</h2>
+    <table id="align"></table>
+  </section>
+  <section>
+    <h2>Timing / state / relations</h2>
+    <div id="states"></div>
+    <table id="timing"></table>
+    <pre id="relations"></pre>
+  </section>
+  <section>
+    <h2>Full summary JSON</h2>
+    <pre id="raw"></pre>
+  </section>
+</main>
+<script>
+const S = {
+  "sessionId": "sess_274b08e81c",
+  "songId": "synthetic_demo",
+  "durationSec": 32.0,
+  "parts": [
+    "vocal",
+    "guitar",
+    "bass",
+    "drums"
+  ],
+  "tempo": {
+    "median_tempo": 120.00000000000001,
+    "reference_part_id": "drums",
+    "mean_stability": 1.0,
+    "n_clock_samples": 129
+  },
+  "alignmentConfidence": {
+    "vocal": 0.9733332500000004,
+    "guitar": 0.9733332500000004,
+    "bass": 0.9733332500000004,
+    "drums": 0.9733332500000004
+  },
+  "timingDeviationMs": {
+    "vocal": 13.333374999999819,
+    "guitar": 13.333374999999819,
+    "bass": 13.333374999999819,
+    "drums": 13.333374999999819
+  },
+  "signedTimingDeviationMs": {
+    "vocal": 2.5000312499999824,
+    "guitar": 2.5000312499999824,
+    "bass": 2.5000312499999824,
+    "drums": 2.5000312499999824
+  },
+  "stateHistogram": {
+    "stable": 129
+  },
+  "breakdown": null,
+  "recovery": null,
+  "relations": [
+    {
+      "from": "vocal",
+      "to": "guitar",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "vocal",
+      "to": "bass",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "vocal",
+      "to": "drums",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "guitar",
+      "to": "bass",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "guitar",
+      "to": "drums",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "bass",
+      "to": "drums",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "vocal",
+      "to": "guitar",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    },
+    {
+      "from": "vocal",
+      "to": "bass",
+      "type": "maintains_reference",
+      "strength": 0.6666666666666667,
+      "lagMs": 0.0,
+      "confidence": 1.0
+    }
+  ],
+  "timingWindowsSample": [
+    {
+      "partId": "vocal",
+      "windowStart": 0.0,
+      "windowEnd": 4.0,
+      "meanAbsMs": 13.333375000000007,
+      "meanSignedMs": -3.333374999999944,
+      "slopeMsPerBeat": 1.6653643459830194,
+      "direction": "on_time",
+      "nMatches": 8
+    },
+    {
+      "partId": "vocal",
+      "windowStart": 4.0,
+      "windowEnd": 8.0,
+      "meanAbsMs": 13.333374999999979,
+      "meanSignedMs": 3.3333749999999718,
+      "slopeMsPerBeat": 2.290396282197676,
+      "direction": "on_time",
+      "nMatches": 8
+    },
+    {
+      "partId": "vocal",
+      "windowStart": 8.0,
+      "windowEnd": 12.0,
+      "meanAbsMs": 13.333374999999759,
+      "meanSignedMs": 3.3333749999999718,
+      "slopeMsPerBeat": 2.2903962821977575,
+      "direction": "on_time",
+      "nMatches": 8
+    },
+    {
+      "partId": "vocal",
+      "windowStart": 12.0,
+      "windowEnd": 16.0,
+      "meanAbsMs": 13.333374999999759,
+      "meanSignedMs": 3.3333749999999718,
+      "slopeMsPerBeat": 2.290396282197759,
+      "direction": "on_time",
+      "nMatches": 8
+    },
+    {
+      "partId": "vocal",
+      "windowStart": 16.0,
+      "windowEnd": 20.0,
+      "meanAbsMs": 13.333374999999759,
+      "meanSignedMs": 3.3333749999999718,
+      "slopeMsPerBeat": 2.290396282197763,
+      "direction": "on_time",
+      "nMatches": 8
+    },
+    {
+      "partId": "vocal",
+      "windowStart": 20.0,
+      "windowEnd": 24.0,
+      "meanAbsMs": 13.333374999999759,
+      "meanSignedMs": 3.3333749999999718,
+      "slopeMsPerBeat": 2.2903962821977526,
+      "direction": "on_time",
+      "nMatches": 8
+    }
+  ],
+  "recommendedPractice": [],
+  "evidenceNotes": [
+    "Score positions come from onset–score DTW alignment (not wall-clock mapping).",
+    "part_signed_timing_deviation_ms: positive = late vs matched score event.",
+    "Relations are probable influence estimates in time windows, not definitive blame.",
+    "Realtime coaching should use alignment confidence thresholds before surfacing messages."
+  ]
+};
+document.getElementById("tempo").textContent = JSON.stringify(S.tempo, null, 2);
+document.getElementById("raw").textContent = JSON.stringify(S, null, 2);
+const align = document.getElementById("align");
+align.innerHTML = "<tr><th>part</th><th>confidence</th></tr>" +
+  Object.entries(S.alignmentConfidence || {}).map(([k,v]) =>
+    `<tr><td>${k}</td><td>${Number(v).toFixed(3)}</td></tr>`).join("");
+const timing = document.getElementById("timing");
+timing.innerHTML = "<tr><th>part</th><th>abs ms</th><th>signed ms</th></tr>" +
+  Object.entries(S.timingDeviationMs || {}).map(([k,v]) => {
+    const s = (S.signedTimingDeviationMs || {})[k];
+    return `<tr><td>${k}</td><td>${Number(v).toFixed(1)}</td><td>${s == null ? "—" : Number(s).toFixed(1)}</td></tr>`;
+  }).join("");
+document.getElementById("states").innerHTML =
+  Object.entries(S.stateHistogram || {}).map(([k,v]) =>
+    `<span class="pill">${k}: ${v}</span>`).join("") +
+  (S.breakdown ? `<p>breakdown: ${JSON.stringify(S.breakdown)}</p>` : "");
+document.getElementById("relations").textContent = JSON.stringify(S.relations, null, 2);
+</script>
+</body>
+</html>

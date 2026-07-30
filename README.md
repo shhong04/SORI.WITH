@@ -123,6 +123,30 @@ pytest -q
 
 ---
 
+## 시연: Offline Analyze (tempo / DTW / timing·relation)
+
+합성 음원 생성 → 분석 → 터미널 요약 + HTML 결과:
+
+```bash
+# 1) 서버 없이 로컬 엔진만 (가장 빠름)
+./scripts/demo_analyze.sh
+
+# 2) 로컬 API에 MIDI+WAV 업로드 (Render와 동일 경로)
+uvicorn sori_with.api.main:app --host 0.0.0.0 --port 8000
+./scripts/demo_analyze.sh http://127.0.0.1:8000
+
+# 3) 배포 Render에 업로드 시연
+./scripts/demo_analyze.sh https://sori-with.onrender.com
+```
+
+결과:
+- 터미널: tempo / alignment / timing·relation 요약
+- `data/demo_analyze_summary.json` · `data/demo_analyze_full.json`
+- 브라우저: 서버 켠 뒤 `http://127.0.0.1:8000/web/demo-analyze.html`
+- Swagger 수동 시연: `/docs` → `POST /api/v1/sessions` → `POST /api/v1/sessions/{id}/analyze` (midi + vocal/guitar/bass/drums)
+
+---
+
 ## 빠른 API 데모
 
 > path 기반 분석은 **development**에서만 기본 활성입니다.
