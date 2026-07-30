@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from sori_with import __version__
+from sori_with.api.routes.demo_stage import router as demo_stage_router
 from sori_with.api.routes.practice import router as practice_router
 from sori_with.api.routes.rooms import router as rooms_router
 from sori_with.api.routes.sessions import router as sessions_router
@@ -43,6 +44,7 @@ app.add_middleware(
 app.include_router(sessions_router, prefix=settings.api_prefix)
 app.include_router(practice_router, prefix=settings.api_prefix)
 app.include_router(rooms_router, prefix=settings.api_prefix)
+app.include_router(demo_stage_router, prefix=settings.api_prefix)
 
 
 @app.get("/health")

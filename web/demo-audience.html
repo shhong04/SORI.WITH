@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>SORI.WITH · 참여</title>
+<style>
+  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+  :root{
+    --bg:#0C0C0C; --ink:#fff; --muted:#9A9690; --accent:#E02020;
+    --card:rgba(255,255,255,0.035); --line:rgba(255,255,255,0.09);
+    --guitar:#E8823C; --bass:#5B8CFF; --drums:#E02020; --vocal:#3DBF6E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;background:#050505;color:var(--ink);
+    font-family:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;}
+  body{
+    background:
+      radial-gradient(900px 520px at 85% -10%, rgba(224,32,32,0.22), transparent 55%),
+      radial-gradient(700px 420px at 10% 100%, rgba(224,32,32,0.08), transparent 50%),
+      #050505;
+    padding: max(20px, env(safe-area-inset-top)) 18px 32px;
+  }
+  .wrap{max-width:420px;margin:0 auto;}
+  .brand{font-weight:800;font-size:1.55rem;letter-spacing:-0.03em;}
+  .brand span{color:var(--accent);}
+  .sub{color:var(--muted);font-size:.92rem;margin:.4rem 0 1.25rem;line-height:1.45;}
+  label{display:block;font-size:.78rem;color:var(--muted);margin:0 0 .4rem;}
+  input[type=text]{
+    width:100%;padding:.75rem .9rem;border-radius:12px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);font-size:1rem;margin-bottom:1rem;
+  }
+  .parts{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1.1rem;}
+  .part{
+    border:1px solid var(--line);border-radius:16px;padding:.9rem .75rem;background:var(--card);
+    text-align:center;cursor:pointer;transition:.15s ease;user-select:none;
+  }
+  .part .dot{width:12px;height:12px;border-radius:50%;margin:0 auto .45rem;}
+  .part strong{display:block;font-size:.95rem;}
+  .part small{color:var(--muted);font-size:.75rem;}
+  .part.on{border-color:var(--p);box-shadow:0 0 0 1px var(--p), 0 0 24px color-mix(in srgb, var(--p) 35%, transparent);}
+  .actions{display:flex;flex-direction:column;gap:.6rem;}
+  button,.filebtn{
+    appearance:none;border:none;border-radius:14px;padding:.95rem 1rem;font-size:.95rem;font-weight:700;
+    cursor:pointer;font-family:inherit;
+  }
+  .primary{background:var(--accent);color:#fff;}
+  .secondary{background:rgba(255,255,255,0.06);color:var(--ink);border:1px solid var(--line);}
+  .danger{background:transparent;color:var(--accent);border:1px solid rgba(224,32,32,.45);}
+  .filebtn{display:block;text-align:center;}
+  .status{
+    margin-top:1rem;padding:.85rem 1rem;border-radius:14px;border:1px solid var(--line);
+    background:rgba(0,0,0,.35);font-size:.9rem;line-height:1.45;color:var(--muted);min-height:3.2rem;
+  }
+  .status.ok{color:#c8f0d4;border-color:rgba(61,191,110,.35);}
+  .rec-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.5rem;}
+  .rec-bar>i{display:block;height:100%;width:0;background:var(--accent);}
+  #file{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">SORI<span>.</span>WITH</div>
+  <p class="sub">파트를 고르고 짧은 녹음·파일을 올리면<br>모니터 HUD에 하이라이트·분석 결과가 뜹니다.</p>
+
+  <label for="name">이름 (선택)</label>
+  <input id="name" type="text" placeholder="예: Alex" maxlength="24" />
+
+  <label>악기 파트</label>
+  <div class="parts" id="parts">
+    <div class="part" data-part="guitar" style="--p:var(--guitar)"><div class="dot" style="background:var(--guitar)"></div><strong>Guitar</strong><small>기타</small></div>
+    <div class="part" data-part="bass" style="--p:var(--bass)"><div class="dot" style="background:var(--bass)"></div><strong>Bass</strong><small>베이스</small></div>
+    <div class="part" data-part="drums" style="--p:var(--drums)"><div class="dot" style="background:var(--drums)"></div><strong>Drums</strong><small>드럼</small></div>
+    <div class="part" data-part="vocal" style="--p:var(--vocal)"><div class="dot" style="background:var(--vocal)"></div><strong>Vocal</strong><small>보컬</small></div>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="btnSelect" type="button">파트 선택 · 모니터에 표시</button>
+    <button class="secondary" id="btnRec" type="button">5초 녹음 후 업로드</button>
+    <div class="rec-bar"><i id="recFill"></i></div>
+    <label class="filebtn secondary" for="file">WAV 파일 선택</label>
+    <input id="file" type="file" accept="audio/wav,audio/*" />
+    <button class="secondary" id="btnSample" type="button">데모 샘플 사용 (마이크 없이)</button>
+  </div>
+
+  <div class="status" id="status">파트를 선택한 뒤 녹음하거나 파일을 올려 주세요.</div>
+</div>
+
+<script>
+const API = `${location.origin}/api/v1`;
+const PARTS = ["guitar","bass","drums","vocal"];
+let part = null;
+let userId = localStorage.getItem("sori_demo_uid") || null;
+let recording = false;
+
+const statusEl = document.getElementById("status");
+function setStatus(msg, ok=false){
+  statusEl.textContent = msg;
+  statusEl.classList.toggle("ok", !!ok);
+}
+
+document.querySelectorAll(".part").forEach(el=>{
+  el.addEventListener("click", ()=>{
+    part = el.dataset.part;
+    document.querySelectorAll(".part").forEach(p=>p.classList.toggle("on", p===el));
+  });
+});
+
+async function selectPart(){
+  if(!part){ setStatus("파트를 먼저 골라 주세요."); return null; }
+  const fd = new FormData();
+  fd.append("part_id", part);
+  fd.append("display_name", document.getElementById("name").value.trim() || part);
+  if(userId) fd.append("user_id", userId);
+  const res = await fetch(`${API}/demo/stage/select`, {method:"POST", body:fd});
+  if(!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  userId = data.you.userId;
+  localStorage.setItem("sori_demo_uid", userId);
+  setStatus(`${data.you.displayName} · ${part} 선택됨 → 모니터에 하이라이트`, true);
+  return data;
+}
+
+document.getElementById("btnSelect").onclick = async ()=>{
+  try{ await selectPart(); }
+  catch(e){ setStatus("선택 실패: "+e.message); }
+};
+
+async function ensureSelected(){
+  if(!userId || !part) await selectPart();
+  if(!userId) throw new Error("파트 선택 필요");
+}
+
+async function uploadBlob(blob, filename){
+  await ensureSelected();
+  const fd = new FormData();
+  fd.append("user_id", userId);
+  fd.append("audio", blob, filename);
+  const res = await fetch(`${API}/demo/stage/audio`, {method:"POST", body:fd});
+  if(!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  setStatus(`업로드 완료 · ${part}. 모니터에서 분석 버튼을 누르세요.`, true);
+  return data;
+}
+
+function encodeWav(samples, sampleRate){
+  const n = samples.length;
+  const buf = new ArrayBuffer(44 + n*2);
+  const v = new DataView(buf);
+  const w = (o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); };
+  w(0,"RIFF"); v.setUint32(4, 36+n*2, true); w(8,"WAVE"); w(12,"fmt ");
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sampleRate,true); v.setUint32(28,sampleRate*2,true);
+  v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
+  let o=44;
+  for(let i=0;i<n;i++){
+    const x = Math.max(-1, Math.min(1, samples[i]));
+    v.setInt16(o, x<0 ? x*0x8000 : x*0x7fff, true); o+=2;
+  }
+  return new Blob([buf], {type:"audio/wav"});
+}
+
+document.getElementById("btnRec").onclick = async ()=>{
+  if(recording) return;
+  let sampleRate = 48000;
+  try{
+    await ensureSelected();
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    sampleRate = ctx.sampleRate;
+    const src = ctx.createMediaStreamSource(stream);
+    const proc = ctx.createScriptProcessor(4096, 1, 1);
+    const chunks = [];
+    proc.onaudioprocess = e => { chunks.push(new Float32Array(e.inputBuffer.getChannelData(0))); };
+    src.connect(proc); proc.connect(ctx.destination);
+    recording = true;
+    setStatus("녹음 중… 5초");
+    const fill = document.getElementById("recFill");
+    const t0 = performance.now();
+    const dur = 5000;
+    (function tick(){
+      const p = Math.min(1, (performance.now()-t0)/dur);
+      fill.style.width = (p*100)+"%";
+      if(p<1) requestAnimationFrame(tick);
+    })();
+    await new Promise(r=>setTimeout(r, dur));
+    proc.disconnect(); src.disconnect(); stream.getTracks().forEach(t=>t.stop());
+    await ctx.close();
+    recording = false;
+    const total = chunks.reduce((a,c)=>a+c.length,0);
+    const samples = new Float32Array(total);
+    let o=0; for(const c of chunks){ samples.set(c,o); o+=c.length; }
+    const wav = encodeWav(samples, sampleRate);
+    setStatus("업로드 중…");
+    await uploadBlob(wav, `${part}_take.wav`);
+  }catch(e){
+    recording = false;
+    setStatus("녹음 실패: "+e.message+" → WAV/데모 샘플을 쓰세요.");
+  }
+};
+
+document.getElementById("file").onchange = async (ev)=>{
+  const f = ev.target.files && ev.target.files[0];
+  if(!f) return;
+  try{
+    setStatus("업로드 중…");
+    await uploadBlob(f, f.name.endsWith(".wav") ? f.name : "upload.wav");
+  }catch(e){ setStatus("업로드 실패: "+e.message+" (WAV만 지원)"); }
+};
+
+document.getElementById("btnSample").onclick = async ()=>{
+  try{
+    await ensureSelected();
+    const fd = new FormData();
+    fd.append("user_id", userId);
+    const res = await fetch(`${API}/demo/stage/sample`, {method:"POST", body:fd});
+    if(!res.ok) throw new Error(await res.text());
+    setStatus(`데모 샘플(${part}) 적용됨 → 모니터에서 분석`, true);
+  }catch(e){ setStatus("샘플 실패: "+e.message); }
+};
+</script>
+</body>
+</html>
