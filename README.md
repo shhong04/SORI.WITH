@@ -2,6 +2,7 @@
 
 **AI Ensemble Platform** — 합주 연습 · AI 세션 · 앙상블 분석 · 코칭을 한 흐름으로 묶은 **백엔드 + 모바일 UI** 프로토타입입니다.
 https://www.youtube.com/watch?v=9pJP0SBZiDY : 문제 상황 이해 인트로 video 
+
 SORI의 Audio-to-MIDI · Score Following · Adaptive Music Control · Performance Analytics 비전을  
 **개인 연습 / 합주 룸 / AI Sessionist / 리포트** API와 화면으로 연결합니다.
 
