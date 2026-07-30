@@ -1,14 +1,14 @@
-# Render Blueprint — 3-day demo hosting
+# Render Blueprint — 3-day demo hosting (Free plan, no payment)
 # Dashboard: https://dashboard.render.com → New → Blueprint → this repo
 #
-# Tip: Free plan sleeps after idle. For a live 3-day demo with visitors,
-# set plan to "starter" in the dashboard (or below) so it stays awake.
+# Free plan sleeps after ~15 min idle; first request after sleep is slow (cold start).
+# Optional: upgrade to "starter" in the dashboard only if you need always-on.
 
 services:
   - type: web
     name: sori-with
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     dockerfilePath: ./Dockerfile
     dockerContext: .
