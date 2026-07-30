@@ -1,0 +1,26 @@
+# Render Blueprint — 3-day demo hosting
+# Dashboard: https://dashboard.render.com → New → Blueprint → this repo
+#
+# Tip: Free plan sleeps after idle. For a live 3-day demo with visitors,
+# set plan to "starter" in the dashboard (or below) so it stays awake.
+
+services:
+  - type: web
+    name: sori-with
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: SORI_WITH_ENVIRONMENT
+        value: production
+      - key: SORI_WITH_ALLOW_PATH_ANALYZE
+        value: "false"
+      - key: SORI_WITH_MAX_UPLOAD_BYTES
+        value: "20971520"
+      - key: SORI_WITH_CORS_ORIGINS
+        value: "*"
+      - key: SORI_WITH_KEEP_UPLOAD_ARTIFACTS
+        value: "false"

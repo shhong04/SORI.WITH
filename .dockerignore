@@ -1,0 +1,15 @@
+# Ignore local/runtime noise in Docker context
+.venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.git
+.DS_Store
+data/reports/**
+data/uploads/**
+data/synthetic_demo/**
+*.wav
+*.mid
+.env

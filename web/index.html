@@ -128,6 +128,130 @@
     display:flex; align-items:center;
     margin:4px 0 18px 0;
   }
+  .home-greeting{
+    margin:-6px 0 18px 0;
+  }
+  .home-greeting-hi{
+    font-size:20px; font-weight:800; letter-spacing:-0.02em; line-height:1.35;
+  }
+  .home-greeting-sub{
+    margin-top:6px; font-size:14px; color:var(--muted); font-weight:500; line-height:1.45;
+  }
+  .cal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .cal-title{ font-weight:800; font-size:15px; }
+  .cal-nav{
+    width:32px; height:32px; border-radius:10px;
+    border:1px solid var(--card-border); background:rgba(255,255,255,0.04);
+    color:var(--ink); font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cal-week{
+    display:grid; grid-template-columns:repeat(7, 1fr); gap:4px;
+    margin-bottom:6px;
+  }
+  .cal-weekday{
+    text-align:center; font-size:10px; font-weight:700; color:var(--muted);
+    padding:2px 0;
+  }
+  .cal-grid{
+    display:grid; grid-template-columns:repeat(7, 1fr); gap:4px;
+  }
+  .cal-day{
+    aspect-ratio:1; border:none; border-radius:12px;
+    background:transparent; color:var(--ink);
+    font-size:12px; font-weight:700; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; position:relative; padding:0;
+  }
+  .cal-day.muted{ color:var(--muted); opacity:0.45; }
+  .cal-day.has-record::after{
+    content:""; width:5px; height:5px; border-radius:50%;
+    background:var(--accent);
+  }
+  .cal-day.selected{
+    background:var(--accent-dim); color:var(--accent);
+    box-shadow:inset 0 0 0 1.5px var(--accent);
+  }
+  .cal-day.today:not(.selected){
+    box-shadow:inset 0 0 0 1px var(--card-border);
+  }
+  .cal-day-list{ margin-top:14px; }
+  .cal-day-empty{
+    font-size:13px; color:var(--muted); padding:8px 2px;
+  }
+  .cal-session-row{
+    width:100%; display:flex; align-items:center; gap:10px;
+    padding:10px 0; border:none; background:none; color:var(--ink);
+    text-align:left; cursor:pointer;
+    border-bottom:1px solid var(--line);
+  }
+  .cal-session-row:last-child{ border-bottom:none; }
+  .cal-session-score{
+    font-weight:800; font-size:16px; color:var(--accent); width:36px; flex-shrink:0;
+  }
+  .cal-session-meta{ flex:1; min-width:0; }
+  .cal-session-song{ font-weight:700; font-size:13px; }
+  .cal-session-sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .cal-session-chevron{ color:var(--muted); font-size:16px; }
+  .practice-hud{
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .practice-hud-top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  }
+  .practice-section{
+    font-weight:800; font-size:15px; letter-spacing:-0.01em;
+  }
+  .practice-barmeta{
+    font-size:12px; color:var(--muted); margin-top:3px; font-weight:600;
+  }
+  .practice-sync{
+    text-align:right; flex-shrink:0;
+  }
+  .practice-sync-val{
+    font-size:22px; font-weight:800; letter-spacing:-0.02em; color:var(--accent);
+    line-height:1;
+  }
+  .practice-sync-lab{
+    font-size:10px; color:var(--muted); margin-top:3px; font-weight:700;
+  }
+  .practice-progress-track{
+    height:8px; border-radius:999px; background:rgba(255,255,255,0.06);
+    overflow:hidden;
+  }
+  .practice-progress-fill{
+    height:100%; width:0%; border-radius:999px;
+    background:linear-gradient(90deg, rgba(224,32,32,0.55), var(--accent));
+    transition: width .12s linear;
+  }
+  .practice-stat-row{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;
+  }
+  .practice-stat{
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--card-border);
+    border-radius:12px; padding:10px 8px; text-align:center;
+  }
+  .practice-stat .val{ font-weight:800; font-size:14px; }
+  .practice-stat .lab{ font-size:10px; color:var(--muted); margin-top:3px; font-weight:600; }
+  .practice-feedback{
+    margin-top:2px;
+  }
+  .practice-feedback-title{
+    font-weight:800; font-size:13px; margin-bottom:8px;
+  }
+  .practice-feedback-item{
+    font-size:13px; line-height:1.5; color:var(--ink-soft); font-weight:500;
+    padding:10px 0; border-bottom:1px solid var(--line);
+  }
+  .practice-feedback-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .practice-feedback-item .tag{
+    display:inline-block; font-size:10px; font-weight:800; color:var(--accent);
+    margin-right:6px; text-transform:uppercase; letter-spacing:0.04em;
+  }
   .brand-wordmark{
     height:26px; width:auto; max-width:200px; display:block;
     object-fit:contain;
@@ -1000,8 +1124,26 @@
   #phone.theme-light .spinner{
     border-color:rgba(22,20,18,0.1); border-top-color:var(--accent);
   }
-  #phone.theme-light .settings-row-icon{
-    border-color:rgba(22,20,18,0.28);
+  #phone.theme-light .home-greeting-hi{
+    color:#000000;
+  }
+  #phone.theme-light .home-greeting-sub{
+    color:#222222;
+  }
+  #phone.theme-light .practice-progress-track{
+    background:rgba(22,20,18,0.08);
+  }
+  #phone.theme-light .practice-stat{
+    background:rgba(255,255,255,0.7);
+  }
+  #phone.theme-light .practice-section,
+  #phone.theme-light .practice-stat .val,
+  #phone.theme-light .practice-feedback-item{
+    color:#000000;
+  }
+  #phone.theme-light .cal-day,
+  #phone.theme-light .cal-session-row,
+  #phone.theme-light .cal-title{
     color:#000000;
   }
   #phone.theme-light .settings-row,
@@ -1086,7 +1228,7 @@ const INSTRUMENTS = [
 ];
 function instColor(id){ const i = INSTRUMENTS.find(x=>x.id===id); return i? i.color : "var(--ai)"; }
 function instEmoji(id){ const i = INSTRUMENTS.find(x=>x.id===id); return i? i.emoji : "🤖"; }
-function instName(id){ const i = INSTRUMENTS.find(x=>x.id===id); return i? i.name : "AI"; }
+function instName(id){ const i = INSTRUMENTS.find(x=>x.id===id); return i? i.name : (id === "guide" ? "Guide" : "AI"); }
 
 let state = {
   screen: "home",
@@ -1119,6 +1261,9 @@ let state = {
   selectedReportId: "rs1c",
   selectedReportSong: "Autumn Leaves",
   aiFillSelected: [],
+  calendarYear: 2026,
+  calendarMonth: 7, // 1-12
+  selectedCalendarDay: "2026-07-28",
   reportSessions: [
     {
       id:"rs1a", attempt:1, date:"2026년 7월 10일", song:"Autumn Leaves",
@@ -1261,7 +1406,7 @@ function render(){
   screenEl.innerHTML = renderScreen();
   document.getElementById("tabbar").innerHTML = renderTabbar();
   attachHandlers();
-  if(state.screen === "live"){
+  if(state.screen === "live" || (state.screen === "personalPractice" && !state.analyzing)){
     initLiveViz();
   }else{
     stopLiveViz();
@@ -1475,6 +1620,7 @@ function mockReport(){
 function renderScreen(){
   switch(state.screen){
     case "home": return screenHome();
+    case "start": return screenStart();
     case "practiceMode":
     case "personalChoice": return screenPersonalChoice();
     case "ensembleMode": return screenEnsembleMode();
@@ -1500,7 +1646,38 @@ function soriLogoMark(){
   return `<img class="brand-wordmark" src="${src}" alt="SORI.WITH" />`;
 }
 
-function screenHome(){
+function homeGreetingLine(){
+  const hour = new Date().getHours();
+  if(hour < 12) return "좋은 아침이에요, Sori님!";
+  if(hour < 18) return "좋은 오후에요, Sori님!";
+  return "좋은 저녁이에요, Sori님!";
+}
+
+function parseSessionDateKey(dateStr){
+  const m = String(dateStr || "").match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
+  if(!m) return null;
+  return `${m[1]}-${String(m[2]).padStart(2,"0")}-${String(m[3]).padStart(2,"0")}`;
+}
+
+function sessionsByDateKey(){
+  const map = {};
+  (state.reportSessions || []).forEach(s => {
+    const key = parseSessionDateKey(s.date);
+    if(!key) return;
+    if(!map[key]) map[key] = [];
+    map[key].push(s);
+  });
+  Object.values(map).forEach(list => list.sort((a,b) => (a.attempt||0) - (b.attempt||0)));
+  return map;
+}
+
+function formatDayLabel(key){
+  if(!key) return "";
+  const [y, m, d] = key.split("-").map(Number);
+  return `${y}년 ${m}월 ${d}일`;
+}
+
+function screenStart(){
   return `
     <div class="brand-row">
       ${soriLogoMark()}
@@ -1541,6 +1718,82 @@ function screenHome(){
         "리듬이 9% 개선됐어요."<br>
         "코러스 전에 기타 타이밍이 흔들렸어요."<br>
         "솔로로 넘어가는 부분을 연습해보세요."
+      </div>
+    </div>
+  `;
+}
+
+function screenHome(){
+  const year = state.calendarYear || 2026;
+  const month = state.calendarMonth || 7;
+  const byDate = sessionsByDateKey();
+  const first = new Date(year, month - 1, 1);
+  const startPad = first.getDay(); // 0 Sun
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+  const selected = state.selectedCalendarDay || null;
+  const selectedSessions = selected ? (byDate[selected] || []) : [];
+
+  const cells = [];
+  for(let i = 0; i < startPad; i++) cells.push(`<div class="cal-day muted"></div>`);
+  for(let d = 1; d <= daysInMonth; d++){
+    const key = `${year}-${String(month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const has = !!(byDate[key] && byDate[key].length);
+    const cls = [
+      "cal-day",
+      has ? "has-record" : "",
+      selected === key ? "selected" : "",
+      key === todayKey ? "today" : "",
+    ].filter(Boolean).join(" ");
+    cells.push(`
+      <button class="${cls}" data-action="select-calendar-day" data-day="${key}" ${has ? "" : ""}>
+        <span>${d}</span>
+      </button>
+    `);
+  }
+
+  return `
+    <div class="brand-row">
+      ${soriLogoMark()}
+    </div>
+    <div class="home-greeting">
+      <div class="home-greeting-hi">${escapeHtml(homeGreetingLine())}</div>
+      <div class="home-greeting-sub">오늘도 같이 연습해볼까요?</div>
+    </div>
+
+    <div class="card">
+      <div class="cal-head">
+        <button class="cal-nav" data-action="calendar-prev" aria-label="이전 달">‹</button>
+        <div class="cal-title">${year}년 ${month}월</div>
+        <button class="cal-nav" data-action="calendar-next" aria-label="다음 달">›</button>
+      </div>
+      <div class="cal-week">
+        ${["일","월","화","수","목","금","토"].map(w => `<div class="cal-weekday">${w}</div>`).join("")}
+      </div>
+      <div class="cal-grid">
+        ${cells.join("")}
+      </div>
+
+      <div class="cal-day-list">
+        <div style="font-weight:800; font-size:13px; margin-bottom:6px;">
+          ${selected ? escapeHtml(formatDayLabel(selected)) + " 연습 기록" : "날짜를 선택하세요"}
+        </div>
+        ${!selected
+          ? `<div class="cal-day-empty">달력에서 연습한 날을 눌러 기록을 확인하세요.</div>`
+          : selectedSessions.length
+            ? selectedSessions.map(s => `
+                <button class="cal-session-row" data-action="open-calendar-session" data-session="${s.id}">
+                  <div class="cal-session-score">${s.score}</div>
+                  <div class="cal-session-meta">
+                    <div class="cal-session-song">${escapeHtml(s.song)}</div>
+                    <div class="cal-session-sub">${s.attempt || "?"}회차 · ${escapeHtml(s.date)}</div>
+                  </div>
+                  <span class="cal-session-chevron">›</span>
+                </button>
+              `).join("")
+            : `<div class="cal-day-empty">이 날의 연습 기록이 없어요.</div>`
+        }
       </div>
     </div>
 
@@ -2244,14 +2497,65 @@ function screenPersonalPractice(){
       <div class="loading-text">피치 · 리듬 · 타이밍 · 표현을 분석하는 중</div>
     `;
   }
+  const myInst = state.myInstrument || "guitar";
+  const myColor = instHex(myInst);
   return `
     <button class="backbtn" data-action="go-instrumentSelect">← 뒤로</button>
     <h1 class="page-title">개인 연습</h1>
-    <p class="page-sub">${escapeHtml(selectedSongLabel())} · ${instEmoji(state.myInstrument)} ${instName(state.myInstrument)}</p>
+    <p class="page-sub">${escapeHtml(selectedSongLabel())} · ${instEmoji(myInst)} ${instName(myInst)}</p>
 
-    <div class="card" style="text-align:center; padding:40px 20px;">
-      <div style="font-size:44px; margin-bottom:10px;">${instEmoji(state.myInstrument)}</div>
-      <div style="font-weight:700; font-size:14px; color:var(--muted);">준비되면 연주를 시작하세요</div>
+    <div class="card practice-hud">
+      <div class="practice-hud-top">
+        <div>
+          <div class="practice-section" id="practiceSection">Intro</div>
+          <div class="practice-barmeta" id="practiceBarMeta">Bar 1 / 32 · Beat 1</div>
+        </div>
+        <div class="practice-sync">
+          <div class="practice-sync-val" id="practiceSyncVal">—</div>
+          <div class="practice-sync-lab">Sync</div>
+        </div>
+      </div>
+      <div class="practice-progress-track">
+        <div class="practice-progress-fill" id="practiceProgressFill"></div>
+      </div>
+      <div class="practice-stat-row">
+        <div class="practice-stat">
+          <div class="val" id="practiceTimingVal">±0ms</div>
+          <div class="lab">Timing</div>
+        </div>
+        <div class="practice-stat">
+          <div class="val" id="practiceBpmVal">120</div>
+          <div class="lab">BPM</div>
+        </div>
+        <div class="practice-stat">
+          <div class="val" id="practiceElapsedVal">0:00</div>
+          <div class="lab">Elapsed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px;">
+      <div class="live-viz-wrap" id="liveVizWrap">
+        <canvas id="liveViz" width="660" height="520"></canvas>
+        <div class="tempo-alert" id="tempoAlert" style="--alert-color:${myColor};" aria-live="polite">
+          <div class="tempo-alert-dot"></div>
+          <div class="tempo-alert-body">
+            <div class="tempo-alert-title" id="tempoAlertTitle">템포 알람</div>
+            <div class="tempo-alert-msg" id="tempoAlertMsg">연주 템포를 맞춰보세요</div>
+          </div>
+        </div>
+      </div>
+      <div class="live-viz-legend">
+        <span><i style="background:${myColor}"></i>나 · ${escapeHtml(instName(myInst))}</span>
+        <span><i style="background:#9A9690"></i>Score Guide</span>
+      </div>
+    </div>
+
+    <div class="card practice-feedback">
+      <div class="practice-feedback-title">실시간 피드백</div>
+      <div id="practiceFeedbackList">
+        <div class="practice-feedback-item"><span class="tag">Ready</span>메트로놈과 함께 첫 소절을 들어가 보세요.</div>
+      </div>
     </div>
 
     <button class="btn btn-primary" data-action="start-personal-analysis">연습 종료 및 AI 분석 받기</button>
@@ -2316,6 +2620,7 @@ function screenLive(){
 }
 
 function instHex(id){
+  if(id === "guide") return "#9A9690";
   const i = INSTRUMENTS.find(x => x.id === id);
   return i ? i.hex : "#E02020";
 }
@@ -2386,6 +2691,13 @@ function colorizeTeamMentions(text, team){
 }
 
 function liveMembers(){
+  if(state.screen === "personalPractice"){
+    const me = state.myInstrument || "guitar";
+    return [
+      {instrument: me, name: "나", isAi:false},
+      {instrument: "guide", name: "Score Guide", isAi:true},
+    ];
+  }
   if(state.members.length) return state.members;
   return [{instrument: state.myInstrument || "guitar", name:"나", isAi:false}];
 }
@@ -2397,6 +2709,8 @@ let liveVizHits = [];
 let liveVizStart = 0;
 let liveVizLastAlert = 0;
 let liveVizAlertUntil = 0;
+let practiceFeedbackCursor = 0;
+let practiceFeedbackLastAt = 0;
 
 function stopLiveViz(){
   if(liveVizRaf){ cancelAnimationFrame(liveVizRaf); liveVizRaf = null; }
@@ -2437,6 +2751,8 @@ function initLiveViz(){
   liveVizStart = performance.now();
   liveVizLastAlert = liveVizStart - 4500; // first alert ~3s in
   liveVizAlertUntil = 0;
+  practiceFeedbackCursor = 0;
+  practiceFeedbackLastAt = liveVizStart;
 
   const alertEl = document.getElementById("tempoAlert");
   if(alertEl) alertEl.classList.remove("show");
@@ -2445,9 +2761,106 @@ function initLiveViz(){
     const elapsed = (now - liveVizStart) / 1000;
     drawLiveViz(canvas, members, elapsed, now);
     updateTempoAlert(now, members);
+    if(state.screen === "personalPractice"){
+      updatePracticeHud(elapsed, now);
+    }
     liveVizRaf = requestAnimationFrame(loop);
   };
   liveVizRaf = requestAnimationFrame(loop);
+}
+
+const PRACTICE_SECTIONS = [
+  {name:"Intro", bars:4},
+  {name:"Verse", bars:8},
+  {name:"Chorus", bars:8},
+  {name:"Bridge", bars:4},
+  {name:"Solo", bars:4},
+  {name:"Outro", bars:4},
+];
+const PRACTICE_TOTAL_BARS = PRACTICE_SECTIONS.reduce((s, x) => s + x.bars, 0);
+const PRACTICE_SEC_PER_BAR = 2; // 120 BPM, 4/4
+const PRACTICE_FEEDBACK = [
+  {tag:"Timing", text:"다운비트보다 약 40ms 늦게 들어오고 있어요. 클릭 앞쪽으로 당겨보세요."},
+  {tag:"Groove", text:"프레이즈 끝이 길어지며 다음 마디 진입이 밀려요. 마지막 음을 짧게 끊어보세요."},
+  {tag:"Sync", text:"가이드와 싱크가 안정적이에요. 지금 템포를 유지하세요."},
+  {tag:"Dynamics", text:"코러스 구간에서 다이내믹을 한 단계 올려도 좋아요."},
+  {tag:"Pitch", text:"코드 체인지 직후 첫 음이 살짝 불안정해요. 자리를 미리 잡으세요."},
+  {tag:"Tempo", text:"템포가 2~3% 당겨졌어요. 하이햇(클릭)에 다시 맞춰보세요."},
+];
+
+function formatPracticeClock(sec){
+  const s = Math.max(0, Math.floor(sec));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2,"0")}`;
+}
+
+function practiceSectionAt(barIndex){
+  let cursor = 0;
+  for(const sec of PRACTICE_SECTIONS){
+    if(barIndex < cursor + sec.bars){
+      return {name: sec.name, localBar: barIndex - cursor + 1, sectionBars: sec.bars};
+    }
+    cursor += sec.bars;
+  }
+  const last = PRACTICE_SECTIONS[PRACTICE_SECTIONS.length - 1];
+  return {name: last.name, localBar: last.bars, sectionBars: last.bars};
+}
+
+function updatePracticeHud(elapsed, now){
+  const fill = document.getElementById("practiceProgressFill");
+  if(!fill) return;
+
+  const totalSec = PRACTICE_TOTAL_BARS * PRACTICE_SEC_PER_BAR;
+  const looped = elapsed % totalSec;
+  const progress = Math.min(1, looped / totalSec);
+  const barFloat = looped / PRACTICE_SEC_PER_BAR;
+  const barIndex = Math.min(PRACTICE_TOTAL_BARS - 1, Math.floor(barFloat));
+  const beat = (Math.floor((barFloat % 1) * 4) % 4) + 1;
+  const section = practiceSectionAt(barIndex);
+
+  // Simulated live metrics
+  const wave = Math.sin(elapsed * 0.9);
+  const timingMs = Math.round(wave * 55 + Math.sin(elapsed * 2.1) * 18);
+  const sync = Math.max(62, Math.min(98, Math.round(88 - Math.abs(timingMs) * 0.28 + Math.sin(elapsed * 0.35) * 4)));
+  const bpm = Math.round(120 + Math.sin(elapsed * 0.55) * 2.4);
+
+  fill.style.width = `${(progress * 100).toFixed(1)}%`;
+  const sectionEl = document.getElementById("practiceSection");
+  const barMetaEl = document.getElementById("practiceBarMeta");
+  const syncEl = document.getElementById("practiceSyncVal");
+  const timingEl = document.getElementById("practiceTimingVal");
+  const bpmEl = document.getElementById("practiceBpmVal");
+  const elapsedEl = document.getElementById("practiceElapsedVal");
+  if(sectionEl) sectionEl.textContent = section.name;
+  if(barMetaEl) barMetaEl.textContent = `Bar ${barIndex + 1} / ${PRACTICE_TOTAL_BARS} · Beat ${beat} · ${section.name} ${section.localBar}/${section.sectionBars}`;
+  if(syncEl){
+    syncEl.textContent = `${sync}%`;
+    syncEl.style.color = sync >= 85 ? "#5DDB8A" : (sync >= 75 ? "var(--accent)" : "#E02020");
+  }
+  if(timingEl){
+    const sign = timingMs > 0 ? "+" : "";
+    timingEl.textContent = `${sign}${timingMs}ms`;
+    timingEl.style.color = Math.abs(timingMs) < 25 ? "#5DDB8A" : "var(--ink)";
+  }
+  if(bpmEl) bpmEl.textContent = String(bpm);
+  if(elapsedEl) elapsedEl.textContent = formatPracticeClock(elapsed);
+
+  // Rotate feedback every ~5.5s
+  if(now - practiceFeedbackLastAt > 5500){
+    practiceFeedbackLastAt = now;
+    practiceFeedbackCursor = (practiceFeedbackCursor + 1) % PRACTICE_FEEDBACK.length;
+    const list = document.getElementById("practiceFeedbackList");
+    if(list){
+      const items = [
+        PRACTICE_FEEDBACK[practiceFeedbackCursor],
+        PRACTICE_FEEDBACK[(practiceFeedbackCursor + 1) % PRACTICE_FEEDBACK.length],
+      ];
+      list.innerHTML = items.map(f => `
+        <div class="practice-feedback-item"><span class="tag">${f.tag}</span>${f.text}</div>
+      `).join("");
+    }
+  }
 }
 
 function updateTempoAlert(now, members){
@@ -2782,11 +3195,6 @@ function screenReport(){
     </div>
 
     <div class="card">
-      <div style="font-weight:800; font-size:14px; margin-bottom:8px;">리더 / 팔로워</div>
-      <div style="font-size:14px; color:var(--ink-soft); line-height:1.55;">이번 세션에서는 <b style="color:${instHexByLabel(r.leader)}">${escapeHtml(r.leader || "")}</b>가 대부분의 구간에서 템포를 이끌었어요.</div>
-    </div>
-
-    <div class="card">
       <div style="font-weight:800; font-size:14px; margin-bottom:10px;">피드백 타임라인</div>
       ${(r.timeline || []).map(t => `
         <div class="timeline-item">
@@ -2873,18 +3281,25 @@ function aiBarsLogo(){
 
 function renderTabbar(){
   const tabs = [
-    {id:"home", icon:"🏠", label:"Home"},
+    {id:"start", icon:"▶", label:"Start", action:"go-start"},
     {id:"playlist", icon:"🎶", label:"Playlist"},
-    {id:"quickAi", icon: aiBarsLogo(), label:"AI", center:true, action:"quick-ai-start"},
+    {id:"home", icon: aiBarsLogo(), label:"Home", center:true, action:"go-home"},
     {id:"report", icon:"📊", label:"Reports"},
     {id:"profile", icon:"👤", label:"Profile"},
   ];
-  return tabs.map(t => `
-    <button class="tab-item ${t.center?'center':''} ${state.screen===t.id?'active':''}" data-action="${t.action || 'go-'+t.id}">
+  return tabs.map(t => {
+    const active = t.id === "home"
+      ? (state.tab === "home" || state.screen === "home")
+      : t.id === "start"
+        ? (state.tab === "start" || state.screen === "start")
+        : (state.screen === t.id || state.tab === t.id);
+    return `
+    <button class="tab-item ${t.center?'center':''} ${active?'active':''}" data-action="${t.action || 'go-'+t.id}">
       <span class="tab-icon">${t.icon}</span>
       <span>${t.label}</span>
     </button>
-  `).join("");
+  `;
+  }).join("");
 }
 
 // ---------- Event handling ----------
@@ -2940,9 +3355,24 @@ async function onAction(e){
         selectedSongId:null, playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
       return;
     }
-    if(target === "practiceMode" || target === "personalChoice"){
-      setState({practiceMode:"personal", subMode:null, screen:"personalChoice", tab:"home",
+    if(target === "start"){
+      stopLiveInterval();
+      setState({screen:"start", tab:"start", practiceMode:null, subMode:null, myInstrument:null, roomCode:null,
+        roomId:null, isHost:false, members:[], joinInput:"", joinError:"", aiMissing:[], aiStyle:null,
         selectedSongId:null, playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
+      return;
+    }
+    if(target === "practiceMode" || target === "personalChoice"){
+      setState({practiceMode:"personal", subMode:null, screen:"personalChoice", tab:"start",
+        selectedSongId:null, playlistAdding:false, ytQuery:"", ytUrl:"", ytSearching:false, ytResults:[]});
+      return;
+    }
+    if(target === "ensembleMode"){
+      setState({screen:"ensembleMode", tab:"start", practiceMode:null, subMode:null, selectedSongId:null});
+      return;
+    }
+    if(target === "report"){
+      setState({screen:"report", tab:"report"});
       return;
     }
     if(target === "songSelect"){
@@ -3244,7 +3674,42 @@ async function onAction(e){
   }
 
   if(action === "quick-ai-start"){
-    setState({practiceMode:"personal", subMode:"aiband", aiMissing:[], aiStyle:null, selectedSongId:null, screen:"songSelect"});
+    setState({practiceMode:"personal", subMode:"aiband", aiMissing:[], aiStyle:null, selectedSongId:null, screen:"songSelect", tab:"start"});
+    return;
+  }
+
+  if(action === "calendar-prev"){
+    let y = state.calendarYear;
+    let m = state.calendarMonth - 1;
+    if(m < 1){ m = 12; y -= 1; }
+    setState({calendarYear:y, calendarMonth:m, selectedCalendarDay:null});
+    return;
+  }
+
+  if(action === "calendar-next"){
+    let y = state.calendarYear;
+    let m = state.calendarMonth + 1;
+    if(m > 12){ m = 1; y += 1; }
+    setState({calendarYear:y, calendarMonth:m, selectedCalendarDay:null});
+    return;
+  }
+
+  if(action === "select-calendar-day"){
+    const day = e.currentTarget.dataset.day;
+    setState({selectedCalendarDay: day === state.selectedCalendarDay ? null : day});
+    return;
+  }
+
+  if(action === "open-calendar-session"){
+    const id = e.currentTarget.dataset.session;
+    const session = (state.reportSessions || []).find(s => s.id === id);
+    setState({
+      selectedReportId: id,
+      selectedReportSong: session ? session.song : state.selectedReportSong,
+      report: session || null,
+      screen:"report",
+      tab:"report",
+    });
     return;
   }
 

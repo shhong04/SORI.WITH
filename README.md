@@ -209,6 +209,41 @@ SORI.WITH/
 
 ---
 
+## 3일 데모 배포 (Render 추천)
+
+Mac을 꺼도 유지되는 **고정 URL**로 올리는 방법입니다. (동시 접속 ~100명 규모 OK)
+
+### 1) 코드 push (이미 GitHub에 있으면 pull 최신만)
+
+```bash
+git push origin main
+```
+
+### 2) Render에 연결
+
+1. [https://dashboard.render.com](https://dashboard.render.com) 로그인  
+2. **New → Blueprint**  
+3. GitHub 저장소 `shhong04/SORI.WITH` 선택 (`render.yaml` 자동 인식)  
+4. 생성 후 나오는 URL 예: `https://sori-with.onrender.com`
+
+환경 변수는 Blueprint에 이미 들어 있습니다 (`production`, path 분석 차단, CORS `*`).
+
+### 3) 잠들지 않게 (데모 중 중요)
+
+- **Free** 플랜은 한동안 접속이 없으면 잠듭니다.  
+- 3일 동안 사람들이 바로 들어와야 하면 Dashboard에서 플랜을 **Starter**로 두세요 (`render.yaml` 기본값도 starter).
+
+### Railway 대안
+
+1. [https://railway.app](https://railway.app) → New Project → Deploy from GitHub  
+2. 이 저장소 선택 (Dockerfile / `railway.json` 사용)  
+3. Variables에 위와 동일 env 설정  
+4. Generate Domain으로 공개 URL 발급
+
+로컬 터널(`trycloudflare`)과 달리, 배포 URL은 **서버가 떠 있는 동안 고정**입니다.
+
+---
+
 ## 면책
 
 본 저장소는 SORI(sori-ai.com) 공개 기술 방향을 참고한 **독립 프로토타입**입니다.  
@@ -217,3 +252,5 @@ SORI 공식 제품·모델 가중치·내부 API를 포함하지 않습니다.
 ## License
 
 MIT — [`LICENSE`](LICENSE)
+
+
