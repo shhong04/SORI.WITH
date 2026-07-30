@@ -1,8 +1,9 @@
-# Render Blueprint — 3-day demo hosting (Free plan, no payment)
+# Render Blueprint — free demo hosting (no paid plan)
 # Dashboard: https://dashboard.render.com → New → Blueprint → this repo
 #
-# Free plan sleeps after ~15 min idle; first request after sleep is slow (cold start).
-# Optional: upgrade to "starter" in the dashboard only if you need always-on.
+# Free plan: $0, but sleeps after ~15 min idle (first open can take 30–60s).
+# No credit card needed for Free on many accounts; if Render still asks to pay,
+# use Railway free trial or keep the local cloudflared tunnel instead.
 
 services:
   - type: web
